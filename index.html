@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset=UTF-8">
+<meta name= "viewport" content= "width=device-width, initial-scale=1.0">
+
+<link rel= "stylesheet"href="styles.css">
+
+<title> Teach Yourself Anything </title>
+</head>
+<body>
+<div class="container mx-auto py-10">
+
+<div class="flex items-center" style="position: absolute; top: 0; left: 0;">
+    <h2 class="text-xl font-bold text-gray-800 mr-4">Autodidact(ing)</h2>
+</div>
+
+<style>
+    body {
+        position: relative;
+    }
+</style>
+
+<!--    <div class="flex justify-between items-center mb-8">    
+    <div class="flex items-center">
+            <h2 class="text-xl font-bold text-gray-800 mr-4">Autodidact(ing)</h2>
+        </div> -->
+
+    
+
+<!--        <div class="container">
+       <!--     <h1> Learn <span id="dynamicText"></span></h1>
+
+        </div>-->
+
+<div class="container" style="margin-top: 10px;">
+    <h1 style="margin-top: -20px;">Learn <span id="dynamicText"></span></h1>
+</div>
+
+<script>
+const words = ['anything', 'anytime', 'anywhere'];
+let index = 0;
+const dynamicText = document.getElementById('dynamicText');
+
+setInterval(() => {
+    dynamicText.textContent = words[index];
+    index = (index + 1) % words.length;
+}, 2000); // Change every 3 seconds (3000 milliseconds)
+</script>
+</body>
+</html>
+

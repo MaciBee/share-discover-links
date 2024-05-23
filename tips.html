@@ -2,23 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Community Tips</title>
+    <title>Tips/Thoughts</title>
     <style>
-        div.tip { margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; }
-        div.comment { margin-left: 20px; padding: 5px; border-left: 2px solid #ddd; }
+        body { font-family: Open Sans, sans-serif; padding: 20px; background-color: #ffffff; color: ##eaeaea; }
+        h1, h2, p { color: #000000; }
+        div.tip { margin-bottom: 20px; padding: 10px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        div.comment { margin-left: 20px; padding: 5px; border-left: 2px solid #eaeaea; }
+        .hidden { display: none; }
+        textarea, input[type="text"] { width: 95%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        textarea { height: 80px; }
+        button:hover { background-color: #ffecef; }
+        .comment-form, .comments-container { margin-top: 10px; }
     </style>
 </head>
 <body>
-    <h1>Submit a Tip</h1>
+<center>    <h1>Capture Fleeting Thoughts</h1> </center>
+<center><p> A junk drawer of ideas to revisit later. If you like, share what's on your mind by submitting your thoughts :) </p></center>
+
     <form id="tipForm">
         <input type="text" name="title" placeholder="Title" required><br>
         <textarea name="description" placeholder="Description" required></textarea><br>
+    <div style="display: flex; justify-content: space-between;">
         <input type="text" name="category" placeholder="Category"><br>
         <input type="text" name="author" placeholder="Author" required><br>
-        <button type="submit">Submit Tip</button>
+</div><br>
+        <button type="submit">Submit</button>
     </form>
 
-    <h2>Community Tips</h2>
+    <h2>Explore Random Thoughts</h2>
     <div id="tipsContainer"></div>
 
     <script>
@@ -39,12 +50,7 @@
                     author: formData.get('author')
                 })
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to submit tip. Status: ' + response.status);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 fetchTips(); // Refresh the list of tips after adding a new one
                 tipForm.reset();
@@ -68,14 +74,16 @@
                         <p>${tip.description}</p>
                         <p>Category: ${tip.category}</p>
                         <p>Author: ${tip.author}</p>
-                        <div id='comments_${tip.id}'></div>
-                        <form onsubmit='submitComment(event, ${tip.id})'>
-                            <input type='text' name='comment_text' placeholder='Your comment' required>
-                            <button type='submit'>Post Comment</button>
-                        </form>
+                        <button onclick="toggleCommentForm(${tip.id})">Leave a Comment</button>
+                        <button onclick="toggleComments(${tip.id})">Show Comments</button>
+                        <div id='comments_${tip.id}' class='comments-container hidden'></div>
+                        <div class="comment-form hidden" id='commentForm_${tip.id}'>
+                            <textarea id='commentText_${tip.id}' placeholder='Your comment' required></textarea>
+                            <input type='text' id='commentAuthor_${tip.id}' placeholder='Your name (optional)'>
+                            <button onclick='submitComment(event, ${tip.id})'>Post Comment</button>
+                        </div>
                     `;
                     tipsContainer.appendChild(div);
-                    fetchComments(tip.id);
                 });
             })
             .catch(error => {
@@ -83,17 +91,30 @@
             });
         }
 
+        window.toggleCommentForm = function(tipId) {
+            var form = document.getElementById('commentForm_' + tipId);
+            form.classList.toggle('hidden');
+        };
+
+        window.toggleComments = function(tipId) {
+            var comments = document.getElementById(`comments_${tipId}`);
+            comments.classList.toggle('hidden');
+            if (!comments.classList.contains('hidden') && comments.innerHTML === '') {
+                fetchComments(tipId);
+            }
+        };
+
         window.submitComment = function(event, tipId) {
             event.preventDefault();
-            const form = event.target;
-            const commentText = form.elements['comment_text'].value;
+            const commentText = document.getElementById('commentText_' + tipId).value;
+            const author = document.getElementById('commentAuthor_' + tipId).value || '';
             fetch(`http://autodidacting.org:3002/comments`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     tip_id: tipId,
                     comment_text: commentText,
-                    author: 'Anonymous'
+                    author: author.trim() // Sending author name if provided
                 })
             })
             .then(response => {
@@ -103,7 +124,8 @@
                 return response.json();
             })
             .then(comment => {
-                form.reset(); // Reset form on successful post
+                document.getElementById('commentText_' + tipId).value = ''; // Reset comment input
+                document.getElementById('commentAuthor_' + tipId).value = ''; // Reset author input
                 fetchComments(tipId); // Refresh comments for the tip
             })
             .catch(error => {
@@ -121,7 +143,7 @@
                 comments.forEach(comment => {
                     const commentDiv = document.createElement('div');
                     commentDiv.className = 'comment';
-                    commentDiv.innerHTML = `<p>${comment.comment_text} - ${comment.author}</p>`;
+                    commentDiv.innerHTML = `<p>${comment.comment_text} ${comment.author ? '- ' + comment.author : ''}</p>`;
                     commentsContainer.appendChild(commentDiv);
                 });
             })

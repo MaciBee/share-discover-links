@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div id="word-container"></div>
+
+    <script>
+        fetch('http://localhost:3000/random-word')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('word-container').innerText = data.join(' - ');
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>

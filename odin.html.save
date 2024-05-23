@@ -1,0 +1,88 @@
+<!DOCTYPE html> 
+<html lang="en">
+ <head>
+	<meta charset = UTF=8">
+<!--	<title>Oct 27, 2023 </title-->
+<!--<title>Oct 31, 2023 </title-->
+
+<title> Nov 2, 2023 </title>
+
+
+<body>
+<p>"howdy"</p>
+<ul>
+<li> salmon </li>
+<li> rolled ice cream </li>
+<li> blueberries </li>
+</ul>
+
+<ol> <p> todo's you need to get done today </p>
+<li> comment </li>
+</ol>
+
+<ol> <p> todo's you need to get done today </p>
+<li>index page </li>
+</ol>
+
+<ol> <p> todo's you need to get done today </p>
+<li> abrar</li>
+<li> freedom to make mistakes </li>
+<li> hair </li>
+<li> credi card </li>
+</ol>
+
+
+<ol> <p> todo's you need to get done today </p>
+<li> Dentist </li>
+<li> Hand </li>
+<li> Box, flex and css </li>
+<li> Hair </li>
+<li> Manhatan </li>
+</ol>
+<ol> <p> todo's you need to get done today </p>
+<li> ramsey county due </li>
+</ol>
+
+ 
+<ol> <p> todo's you need to get done Later </p>
+<li> physical therapy 10 am neuro </li>
+<li> Plant zoom at 6:30 | Nov 1 and 2 </li>
+<li> call (direct) ethiopia</li>
+<li> trick or treat </li>
+</ol>
+
+
+
+<ol> <p> todo's you need to get done today </p>
+<li> Hair </li>
+<li> car checked </li>
+<li> hair spray </li>
+<li> mattres delivered </li>
+<li> housing- rental </li>
+<li> book summary </li>
+<li> bonus: take stuff home </li>
+</ol>
+
+<ol> <p> ordered but unorder list of places to visit</p>
+<li> Japan </li>
+<li> Moroco </li>
+<li> Egypt </li> 
+</ol>
+
+<ul> <p> movies </p>
+<li> dark knight </li>
+<li> About Time </li>
+<li> Fly away home </li>
+<li> blazing saddles </li>
+<li> baby driver </li>
+</ul>
+
+<!---		<a href="https://www.theodinproject.com/about">click me</a>-->
+	<a href="https://www.theodinproject.com/about" target="_blank" rel="noopener noreferrer">click me</a>
+
+
+
+ </head>
+
+</body>
+</html>

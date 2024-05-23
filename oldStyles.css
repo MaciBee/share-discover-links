@@ -1,0 +1,79 @@
+body, html {
+  height: 100%;/*was 69% for no reason  */
+  margin: 0;
+
+}
+
+/*top left name added */
+.website-name {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 14px;
+            color: #000;
+        }
+
+
+nav {
+  background-color: #ffffff;
+  padding: 10px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  display: flex; /* Enable flexbox for the navigation */
+  align-items: center; /* Align items vertically */
+}
+
+
+
+.logo-container {
+  margin-right: auto; /* Pushes all other nav items to the right */
+}
+
+nav a {
+  margin: 0 10px;
+}
+
+body {
+  padding-top: 80px; /* Adjust if needed to accommodate the nav bar */
+}
+
+/* Style adjustments for the logo */
+.logo-container img {
+  width: 50px;
+  height: 32px; /* Adjust the size of your logo */
+}
+
+
+
+
+p span {
+  font-style: italic;
+  /* any additional styling you need for the italicized text */
+}
+
+/*center text in index h3 */
+
+.centered-heading {
+    text-align: center;
+    /* Add any additional styles specific to your h3 element here */
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 40px; /* adjust this value to give enough space for the nav >
+}
+
+
+h1 {
+    text-decoration:none;
+    border:0;
+    width : 162px;
+    height : 113px;
+    margin : 0;
+    padding : 0;
+    background : url(/images/logo.gif) no-repeat 0 0;
+}
+ 

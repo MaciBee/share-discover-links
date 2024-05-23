@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GRE Vocabulary</title>
+    <!-- You can add CSS here or link to an external stylesheet -->
+
+
+</head>
+<body>
+    <h1>Word of the Day</h1>
+    <div id="word-container">
+        <!-- The word from the server will be displayed here -->
+    </div>
+
+ <script>
+
+    // Fetch the word from your Node.js server
+    fetch('http://autodidacting.org:3000/grevocab')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+
+
+        .then(data => {
+            // Display the word in the word-container div           
+
+          document.getElementById('word-container').innerText = data.word;
+
+          })
+
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+</script>
+
+
+</body>
+</html>
+
+

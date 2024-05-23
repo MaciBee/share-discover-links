@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startup Founder Advice</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Additional CSS for the expanding/collapsing effect */
+        .expandable-content {
+            display: none;
+        }
+        .expanded {
+            display: block;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 py-8 px-4 md:px-16 lg:px-32">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-center">Startup Founder Advice</h1>
+
+        <div class="mb-8">
+            <h2 id="paul-graham" class="text-xl font-semibold mb-4 cursor-pointer">Paul Graham</h2>
+            <div class="expandable-content">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold mb-2">Listen to what people are saying</h3>
+                    <p>You can't just accept what is on the surface. Understand the context. And try to understand why people think that something is a good idea. And how their situation is similar or different than yours.</p>
+                </div>
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold mb-2">Start small and evolve</h3>
+                    <p>It's essential to begin with a minimal viable product and gradually refine it based on user feedback and market demands.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Finding enthusiastic users</h3>
+                    <p>Try to find at least one person who cares, one person who is enthusiastic about what you are doing. These early adopters can provide valuable insights and feedback.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Other founders' advice goes here -->
+    </div>
+
+    <script>
+        // JavaScript to handle the expanding/collapsing effect
+        const paulGrahamToggle = document.getElementById('paul-graham');
+        const expandableContent = document.querySelector('.expandable-content');
+
+        paulGrahamToggle.addEventListener('click', function () {
+            expandableContent.classList.toggle('expanded');
+        });
+    </script>
+</body>
+
+</html>
+

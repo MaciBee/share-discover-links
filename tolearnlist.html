@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        #todoList {
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+        }
+
+        #todoList ul {
+            padding: 0;
+            list-style: none;
+        }
+
+        #todoList ul li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div id="todoList">
+    <h2>To-Do List</h2>
+    <ul>
+        <li>Learn about elements, attributes, headings, paragraphs, links, lists, forms, and more.</li>
+        <li>Understand properties like padding, margin, color, font-size, and learn about selectors, classes, IDs</li>
+	<li>Begin with basics like variables, functions, loops, events, and then delve into the Document Object Model (DOM) for webpage manipulation</li>
+<br>
+	<li>
+    </ul>
+    <input type="text" id="newTask" placeholder="Add new task">
+    <button onclick="addTask()">Add</button>
+</div>
+
+<script>
+    function addTask() {
+        const taskInput = document.getElementById('newTask');
+        const taskText = taskInput.value.trim();
+        if (taskText) {
+            const ul = document.querySelector('#todoList ul');
+            const li = document.createElement('li');
+            li.textContent = taskText;
+            ul.appendChild(li);
+            taskInput.value = ''; // Clear the input
+        }
+    }
+</script>
+
+</body>
+</html>

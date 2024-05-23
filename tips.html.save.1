@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Community Tips</title>
+    <style>
+        div.tip { margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; }
+        div.comment { margin-left: 20px; padding: 5px; border-left: 2px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>Submit a Tip</h1>
+    <form id="tipForm">
+        <input type="text" name="title" placeholder="Title" required><br>
+        <textarea name="description" placeholder="Description" required></textarea><br>
+        <input type="text" name="category" placeholder="Category"><br>
+        <input type="text" name="author" placeholder="Author" required><br>
+        <button type="submit">Submit Tip</button>
+    </form>
+
+    <h2>Community Tips</h2>
+    <div id="tipsContainer"></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tipForm = document.getElementById('tipForm');
+        const tipsContainer = document.getElementById('tipsContainer');
+
+        tipForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(tipForm);
+            fetch('http://autodidacting.org:3002/tips', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    category: formData.get('category'),
+                    author: formData.get('author')
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to submit tip. Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                fetchTips(); // Refresh the list of tips after adding a new one
+                tipForm.reset();
+            })
+            .catch(error => {
+                console.error('Error submitting tip:', error);
+                alert('Failed to submit tip: ' + error.message);
+            });
+        });
+
+        function fetchTips() {
+            fetch('http://autodidacting.org:3002/tips')
+            .then(response => response.json())
+            .then(tips => {
+                tipsContainer.innerHTML = ''; // Clear existing tips
+                tips.forEach(tip => {
+                    const div = document.createElement('div');
+                    div.className = 'tip';
+                    div.innerHTML = `
+                        <h3>${tip.title}</h3>
+                        <p>${tip.description}</p>
+                        <p>Category: ${tip.category}</p>
+                        <p>Author: ${tip.author}</p>
+                        <div id='comments_${tip.id}'></div>
+                        <form onsubmit='submitComment(event, ${tip.id})'>
+                            <input type='text' name='comment_text' placeholder='Your comment' required>
+                            <button type='submit'>Post Comment</button>
+                        </form>
+                    `;
+                    tipsContainer.appendChild(div);
+                    fetchComments(tip.id);
+                });
+            })
+            .catch(error => {
+                console.error('Failed to fetch tips:', error);
+            });
+        }
+
+        window.submitComment = function(event, tipId) {
+            event.preventDefault();
+            const form = event.target;
+            const commentText = form.elements['comment_text'].value;
+            fetch(`http://autodidacting.org:3002/comments`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    tip_id: tipId,
+                    comment_text: commentText,
+                    author: 'Anonymous'
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to post comment. Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(comment => {
+                form.reset(); // Reset form on successful post
+                fetchComments(tipId); // Refresh comments for the tip
+            })
+            .catch(error => {
+                console.error('Error posting comment:', error);
+                alert('Failed to post comment: ' + error.message);
+            });
+        };
+
+i        function fetchComments(tipId) {
+            fetch(`http://autodidacting.org:3002/comments/${tipId}`)
+            .then(response => response.json())
+            .then(comments => {
+                const commentsContainer = document.getElementById(`comments_${tipId}`);
+                commentsContainer.innerHTML = ''; // Clear previous comments
+                comments.forEach(comment => {
+                    const commentDiv = document.createElement('div');
+                    commentDiv.className = 'comment';
+                    commentDiv.innerHTML = `<p>${comment.comment_text} - ${comment.author}</p>`;
+                    commentsContainer.appendChild(commentDiv);
+                });
+            })
+            .catch(error => {
+                console.error(`Error fetching comments for tip ${tipId}:`, error);
+            });
+        }
+
+        fetchTips(); // Fetch and display tips on page load
+    });
+    </script>
+</body>
+</html>

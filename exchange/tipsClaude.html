@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Your Tip</title>
+</head>
+<body>
+    <h1>Submit a Tip</h1>
+    <form id="tipForm">
+        <input type="text" name="title" placeholder="Title" required><br>
+        <textarea name="description" placeholder="Description" required></textarea><br>
+        <input type="text" name="category" placeholder="Category"><br>
+        <input type="text" name="author" placeholder="Author"><br>
+        <button type="submit">Submit Tip</button>
+    </form>
+
+    <h2>Submitted Tips</h2>
+    <div id="tipsList"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchTips();
+
+            const tipForm = document.getElementById('tipForm');
+            tipForm.addEventListener('submit', submitTip);
+        });
+
+        function fetchTips() {
+            fetch('/tips') // No need to specify the domain here
+                .then(response => response.json())
+                .then(tips => {
+                    const list = document.getElementById('tipsList');
+                    list.innerHTML = ''; // Clear previous tips
+                    tips.forEach(tip => {
+                        const tipElement = document.createElement('div');
+                        tipElement.innerHTML = `<h3>${tip.title}</h3>
+                                                <p>${tip.description}</p>
+                                                <p>Category: ${tip.category}</p>
+                                                <p>Author: ${tip.author}</p>`;
+                        list.appendChild(tipElement);
+                    });
+                })
+                .catch(error => console.error('Error fetching tips:', error));
+        }
+
+        function submitTip(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const formData = new FormData(event.target);
+            const tipData = Object.fromEntries(formData.entries());
+
+            fetch('/tips', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(tipData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    event.target.reset(); // Clear form fields
+                    fetchTips(); // Refresh tips list
+                } else {
+                    console.error('Failed to submit tip');
+                }
+            })
+            .catch(error => console.error('Error submitting tip:', error));
+        }
+    </script>
+</body>
+</html>

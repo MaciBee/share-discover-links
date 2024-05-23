@@ -1,0 +1,49 @@
+body, html {
+  height: 100%;
+  margin: 0;
+}
+
+nav {
+  background-color: #cacaca;
+  padding: 40px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+}
+
+nav a {
+  margin: 0 10px;
+}
+
+.text-container {
+    max-width: 600px; /* or any other value */
+    margin: 0 auto;   /* centers the container */
+}
+
+.text-container p {
+    font-size: 10px;      /* Adjust the font size as needed */
+    line-height: 1.0;    /* Good for readability */
+
+</*--phone-- */->
+
+@media (max-width: 768px) {
+    .text-container {
+        padding: 0 10px; /* Less padding on smaller screens */
+	font-size: 18px    
+}
+}
+
+h1{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 90px; /* adjust this value to give enough space for the nav bar */
+}
+
+p {
+    font-size: 10px; /* Smaller text for paragraphs */
+    margin: 10px 3px 30px 5px;
+}
+h1 {
+}
+}

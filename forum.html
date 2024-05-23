@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+    <h1>Register</h1>
+    <form id="registerForm">
+        <input type="text" name="username" placeholder="Username" required><br>
+        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <button type="submit">Register</button>
+    </form>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            const formData = new FormData(this);
+            // Fetch API to send form data to server
+            fetch('http://autodidacting.org:3001/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    username: formData.get('username'),
+                    email: formData.get('email'),
+                    password: formData.get('password')
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // If the server responded with a non-200 status, throw an error
+                    throw new Error('Failed to register. Status: ' + response.status);
+                }
+                return response.json(); // Parse JSON response body
+            })
+            .then(data => {
+                // Handle data logic here, e.g., showing a success message
+                alert('Registration successful: ' + data.message);
+                this.reset(); // Reset form after successful registration
+            })
+            .catch(error => {
+                // Handle errors, e.g., network issues or JSON parsing problems
+                console.error('Error registering:', error);
+                alert('Failed to register: ' + error.message);
+            });
+        });
+    </script>
+</body>
+</html>

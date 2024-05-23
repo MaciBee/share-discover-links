@@ -1,0 +1,79 @@
+require('dotenv').config(); // Load environment variables from .env
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const mysql = require('mysql');
+const path = require('path');
+const app = express();
+
+// Middleware to parse form data
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Serve static files from the "public" directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Database connection setup using a connection pool
+const pool = mysql.createPool({
+    connectionLimit: 10,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+});
+
+// Function to query the database
+const queryDatabase = (query, params, callback) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            callback(err, null);
+            return;
+        }
+        connection.query(query, params, (err, results) => {
+            connection.release(); // Release the connection back to the pool
+            callback(err, results);
+        });
+    });
+};
+
+// Route to handle form submission for questions
+app.post('/submit-question', (req, res) => {
+    const question = req.body.question;
+    const query = 'INSERT INTO Questions (question_text, user_id) VALUES (?, ?)';
+
+    queryDatabase(query, [question, 1], (err, results) => { // Assuming user_id is 1 for simplicity
+        if (err) {
+            console.error('Error inserting question into database:', err);
+            res.status(500).send('An error occurred while submitting your question.');
+            return;
+        }
+        res.send('Question submitted successfully!');
+    });
+});
+
+// Route to display the questions
+app.get('/questions', (req, res) => {
+    const query = 'SELECT * FROM Questions';
+
+    queryDatabase(query, [], (err, results) => {
+        if (err) {
+            console.error('Error fetching questions from database:', err);
+            res.status(500).send('An error occurred while fetching questions.');
+            return;
+        }
+
+        let questionsHTML = '<h1>Questions</h1><ul>';
+        results.forEach(question => {
+            questionsHTML += `<li>${question.question_text}</li>`;
+        });
+        questionsHTML += '</ul>';
+
+        res.send(questionsHTML);
+    });
+});
+
+// Start the server on the port defined in the .env file
+const port = process.env.PORT || 3007;
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}/`);
+});
+q

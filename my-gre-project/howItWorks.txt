@@ -1,0 +1,88 @@
+🚀StEP 1
+👨‍💻👩‍💻Notes on configuring a script- this already exists :)
+on a js file 
+
+//js
+1//Load Google APIs and Credentials:
+At the top of your file, require the Google APIs library and load your JSON key file. It will look something like this:
+
+const { google } = require('googleapis');
+const credentials = require('./path-to-your-json-file.json'); // Replace with the actual path to your JSON key file
+
+2//Configure Authentication:
+Set up the Google Auth client with the credentials:
+
+const auth = new google.auth.GoogleAuth({
+  credentials: {
+    client_email: credentials.client_email,
+    private_key: credentials.private_key,
+  },
+  scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'], // Adjust scopes if you need more permissions
+});
+
+3//Access the Spreadsheet:
+//Initialize the Sheets API client and write a function to read data from your spreadsheet:
+
+const sheets = google.sheets({ version: 'v4', auth });
+
+async function readSpreadsheet(spreadsheetId, range) {
+  const res = await sheets.spreadsheets.values.get({
+ spreadsheetId,
+ range,
+  });
+  return res.data.values;
+}
+
+//^^ replace 'spreadsheetId' with url and range: from A to C 
+
+4//Running Your Script:
+
+//After setting up the function, you can call it with your spreadsheet details and use console.log to print the result for testing.
+//Run your script with node index.js in the terminal.
+
+🚀StEP 2
+0//authenticate in your Node.js project to connect to the Google Sheets AP
+1//Require Google APIs Library:
+const { google } = require('googleapis');
+2//Load Your JSON Key for Authentication:
+const key = require('./grevocab-4000000-3000000df4df4.json'); // Adjust the path if the file is in a different directory
+	//this is the json file earlier transfered to directory. it has everything, key and email. don't need to manually write anything 
+	//make sure right directory: const key = require('/Users/name/Downloads/grevocab-40000-300072df4df4.json');
+
+3//Configure Google Auth Client:Set up the authentication client using the key:
+const auth = new google.auth.GoogleAuth({
+  credentials: {
+    client_email: key.client_email,
+    private_key: key.private_key.replace(/\\n/g, '\n'),
+  },
+  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+});
+	// info found inside Key file: no need to write anything :) 
+4//Access the Google Sheets API:Initialize the Sheets API
+const sheets = google.sheets({ version: 'v4', auth });
+	//You can now use this sheets client to interact with your Google Spreadsheet.
+
+5//Example: Reading a Spreadsheet:an example function to read from a spreadsheet
+//ID https://docs.google.com/spreadsheets/d/[SPREADSHEET_ID]/edit#gid=0
+//In this URL, [SPREADSHEET_ID] is the part you need. It's a long string located between /d/ and /edit.//
+//range: 'Sheet1!A:C' // ALSO MAKE SURE google sheet is actually called Sheet1 
+//change only fuction readSpreadsheet(spreadsheetId, range)
+async function readSpreadsheet(spreadsheetId, range) {
+  try {
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range,
+    });
+    return response.data.values;
+  } catch (error) {
+    console.error('The API returned an error: ' + error);
+  }
+}
+6//Run Your Script:
+
+You can now run your script with node index.js 
+
+
+
+
+

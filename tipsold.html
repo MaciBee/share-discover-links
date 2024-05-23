@@ -1,0 +1,34 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Your Tip</title>
+</head>
+<body>
+    <h1>Submit a Tip</h1>
+    <form action="http://autodidacting.org:3000/tips" method="POST"> 
+	<input type="text" name="title" placeholder="Title" required><br>
+        <textarea name="description" placeholder="Description" required></textarea><br>
+        <input type="text" name="category" placeholder="Category"><br>
+        <input type="text" name="author" placeholder="Author"><br>
+        <button type="submit" onclick="this.disabled=true; this.form.submit();">Submit</button>    </form>
+<!--button sumbits once because this.disabled= true--4.29 --> 
+    <!--<div id="tipsContainer"></div>-->
+
+   /* <script>
+        // Script to fetch and display tips
+       // fetch('http://autodidacting.org:3000/tips')
+            //.then(response => response.json())
+           // .then(tips => {
+               // const container = document.getElementById('tipsContainer');
+               // tips.forEach(tip => {
+                   // const div = document.createElement('div');
+                 //   div.innerHTML = `<h4>${tip.title}</h4><p>${tip.description}</p><p>Category: ${tip.category}</p><p>Author: ${tip.author}</p>`;
+               //     container.appendChild(div);
+             //   });
+           // })
+           // .catch(error => console.error('Error fetching tips:', error));
+    </script> */
+</body>
+</html>
