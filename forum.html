@@ -2,10 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Register</title>
+    <title>Forum Login</title>
 </head>
 <body>
-    <h1>Register</h1>
+    <h1>Login to the Forum</h1>
+    <form id="loginForm">
+        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <button type="submit">Login</button>
+    </form>
+
+    <h1>Register for the Forum</h1>
     <form id="registerForm">
         <input type="text" name="username" placeholder="Username" required><br>
         <input type="email" name="email" placeholder="Email" required><br>
@@ -15,9 +22,8 @@
 
     <script>
         document.getElementById('registerForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission
+            event.preventDefault();
             const formData = new FormData(this);
-            // Fetch API to send form data to server
             fetch('http://autodidacting.org:3001/register', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -29,20 +35,44 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    // If the server responded with a non-200 status, throw an error
                     throw new Error('Failed to register. Status: ' + response.status);
                 }
-                return response.json(); // Parse JSON response body
+                return response.json();
             })
             .then(data => {
-                // Handle data logic here, e.g., showing a success message
                 alert('Registration successful: ' + data.message);
-                this.reset(); // Reset form after successful registration
+                this.reset();
             })
             .catch(error => {
-                // Handle errors, e.g., network issues or JSON parsing problems
                 console.error('Error registering:', error);
                 alert('Failed to register: ' + error.message);
+            });
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('http://autodidacting.org:3001/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email: formData.get('email'),
+                    password: formData.get('password')
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to login. Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Login successful: ' + data.message);
+                window.location.href = 'http://autodidacting.org/ask_question.html'; // Redirect to the forum page
+            })
+            .catch(error => {
+                console.error('Error logging in:', error);
+                alert('Failed to login: ' + error.message);
             });
         });
     </script>

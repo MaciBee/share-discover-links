@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ask a Question</title>
+</head>
+<body>
+    <h1>Ask a Question</h1>
+    <form id="questionForm">
+        <textarea name="question_text" placeholder="Your question" required></textarea><br>
+        <input type="hidden" name="user_id" value="1"><!-- Replace with dynamic user_id -->
+        <button type="submit">Submit Question</button>
+    </form>
+
+    <h2>Questions</h2>
+    <div id="questionsContainer"></div>
+
+    <script>
+        document.getElementById('questionForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('http://autodidacting.org:3001/questions', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    question_text: formData.get('question_text'),
+                    user_id: formData.get('user_id')
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to submit question. Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Question submitted successfully');
+                fetchQuestions(); // Reload questions
+                this.reset(); // Reset form after submission
+            })
+            .catch(error => {
+                console.error('Error submitting question:', error);
+                alert('Failed to submit question: ' + error.message);
+            });
+        });
+
+        function fetchQuestions() {
+            fetch('http://autodidacting.org:3001/questions')
+            .then(response => response.json())
+            .then(questions => {
+                const container = document.getElementById('questionsContainer');
+                container.innerHTML = ''; // Clear existing questions
+                questions.forEach(question => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <h3>${question.question_text}</h3>
+                        <form onsubmit="submitAnswer(event, ${question.question_id})">
+                            <textarea name="answer_text" placeholder="Your answer" required></textarea><br>
+                            <input type="text" name="author" placeholder="Author name" required><br>
+                            <input type="hidden" name="user_id" value="1"><!-- Replace with dynamic user_id -->
+                            <button type="submit">Post Answer</button>
+                        </form>
+                        <div id="answers_${question.question_id}"></div>
+                    `;
+                    container.appendChild(div);
+                    fetchAnswers(question.question_id);
+                });
+            })
+            .catch(error => {
+                console.error('Failed to fetch questions:', error);
+            });
+        }
+
+        window.submitAnswer = function(event, questionId) {
+            event.preventDefault();
+            const form = event.target;
+            const answerText = form.elements['answer_text'].value;
+            const author = form.elements['author'].value;
+            const userId = form.elements['user_id'].value;
+            fetch('http://autodidacting.org:3001/answers', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    answer_text: answerText,
+                    question_id: questionId,
+                    user_id: userId,
+                    author: author
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to post answer. Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Answer posted successfully');
+                fetchAnswers(questionId); // Reload answers
+                form.reset(); // Reset form after submission
+            })
+            .catch(error => {
+                console.error('Error posting answer:', error);
+                alert('Failed to post answer: ' + error.message);
+            });
+        };
+
+        function fetchAnswers(questionId) {
+            fetch(`http://autodidacting.org:3001/answers?question_id=${questionId}`)
+            .then(response => response.json())
+            .then(answers => {
+                const container = document.getElementById(`answers_${questionId}`);
+                container.innerHTML = ''; // Clear previous answers
+                answers.forEach(answer => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `<p>${answer.answer_text} - by ${answer.author}</p>`;
+                    container.appendChild(div);
+                });
+            })
+            .catch(error => {
+                console.error(`Error fetching answers for question ${questionId}:`, error);
+            });
+        }
+
+        fetchQuestions(); // Load questions on page load
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form id="loginForm">
+        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <button type="submit">Login</button>
+    </form>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('http://autodidacting.org:3001/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email: formData.get('email'),
+                    password: formData.get('password')
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to login. Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Login successful: ' + data.message);
+                window.location.href = 'ask_question.html'; // Redirect to your homepage
+            })
+            .catch(error => {
+                console.error('Error logging in:', error);
+                alert('Failed to login: ' + error.message);
+            });
+        });
+    </script>
+</body>
+</html>

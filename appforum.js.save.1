@@ -9,6 +9,7 @@ const path = require('path');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public'))); // Serve static files from 'public'
 
 // Create a connection pool
 const pool = mysql.createPool({
@@ -20,6 +21,16 @@ const pool = mysql.createPool({
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
+});
+
+// Serve the forum.html file for registration and login
+app.get('/forum.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'forum.html'));
+});
+
+// Serve the ask_question.html file for the Q&A forum
+app.get('/ask_question.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'ask_question.html'));
 });
 
 // Registration endpoint
@@ -66,61 +77,68 @@ app.post('/login', (req, res) => {
     );
 });
 
-// Endpoint to get all questions
-app.get('/questions', (req, res) => {
-    pool.query('SELECT * FROM Questions ORDER BY created_at DESC', (err, results) => {
-        if (err) {
-            console.error('Error fetching questions:', err);
-            return res.status(500).json({ message: 'Failed to fetch questions' });
-        }
-        res.json(results);
-    });
-});
-
-// Endpoint to add a new question
+// Endpoint to submit a question
 app.post('/questions', (req, res) => {
-    const { question_text, user_id } = req.body;
-    pool.query('INSERT INTO Questions (question_text, user_id) VALUES (?, ?)', [question_text, user_id], (err, results) => {
-        if (err) {
-            console.error('Failed to insert question:', err);
-            return res.status(500).json({ message: 'Failed to submit question' });
-        }
-        res.status(201).json({ message: 'Question submitted successfully' });
-    });
-});
-
-// Endpoint to get all answers for a specific question
-app.get('/answers', (req, res) => {
-    const { question_id } = req.query;
-    pool.query('SELECT * FROM Answers WHERE question_id = ? ORDER BY created_at DESC', [question_id], (err, results) => {
-        if (err) {
-            console.error('Error fetching answers:', err);
-            return res.status(500).json({ message: 'Failed to fetch answers' });
-        }
-        res.json(results);
-    });
-});
-
-// Endpoint to add a new answer
-app.post('/answers', (req, res) => {
-    const { answer_text, question_id, user_id, author } = req.body; // include author
+    const { user_id, question_text } = req.body;
     pool.query(
-        'INSERT INTO Answers (answer_text, question_id, user_id, author) VALUES (?, ?, ?, ?)', 
-        [answer_text, question_id, user_id, author], // Pass author here
+        'INSERT INTO Questions (user_id, question_text) VALUES (?, ?)',
+        [user_id, question_text],
         (err, results) => {
             if (err) {
-                console.error('Failed to insert answer:', err);
-                return res.status(500).json({ message: 'Failed to post answer', error: err.sqlMessage });
+                console.error('Failed to submit question:', err);
+                return res.status(500).json({ message: 'Failed to submit question' });
             }
-            res.status(201).json({ message: 'Answer posted successfully' });
+            res.status(201).json({ message: 'Question submitted successfully' });
         }
     );
 });
 
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
+// Endpoint to get all questions
+app.get('/questions', (req, res) => {
+    const sqlSelect = 'SELECT * FROM Questions ORDER BY created_at DESC';
+    pool.query(sqlSelect, (err, results) => {
+        if (err) {
+            console.error('Error fetching questions:', err);
+            res.status(500).send('Error fetching questions');
+            return;
+        }
+        res.json(results);
+    });
+});
 
-// Start the server
+// Endpoint to submit an answer
+app.post('/answers', (req, res) => {
+    const { question_id, answer_text, author } = req.body;
+    pool.query(
+        'INSERT INTO Answers (question_id, answer_text, author) VALUES (?, ?, ?)',
+        [question_id, answer_text, author],
+        (err, results) => {
+            if (err) {
+                console.error('Failed to submit answer:', err);
+                return res.status(500).json({ message: 'Failed to submit answer' });
+            }
+            res.status(201).json({ message: 'Answer submitted successfully' });
+        }
+    );
+});
+
+// Endpoint to get answers for a specific question
+app.get('/answers/:question_id', (req, res) => {
+    const { question_id } = req.params;
+    pool.query(
+        'SELECT * FROM Answers WHERE question_id = ? ORDER BY created_at DESC',
+        [question_id],
+        (err, results) => {
+            if (err) {
+                console.error('Error fetching answers:', err);
+                res.status(500).send('Error fetching answers');
+                return;
+            }
+            res.json(results);
+        }
+    );
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
