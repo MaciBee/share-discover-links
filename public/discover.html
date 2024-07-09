@@ -2,17 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Discover Links</title>
+    <title>Discover</title>
 </head>
 <body>
-    <script src="app.js"></script>
+    <div id="registerContainer">
+<h1> <center> A bookmarking site to save links. </center><h1> 
+<h3><center> beta v 0.1 </center></h3>
+<p><center>please register an account and login 2 start saving.
+Remember ur info bc we can't reset it yet.</center></p>
+ 
 
-    <h1>Register</h1>
-    <form id="register-form">
-        <input type="text" id="register-username" placeholder="Username" required>
-        <input type="password" id="register-password" placeholder="Password" required>
-        <button type="submit">Register</button>
-    </form>
+        <h2>Register</h2>
+        <form id="registerForm">
+            <input type="text" id="registerUsername" placeholder="Username" required>
+            <input type="password" id="registerPassword" placeholder="Password" required>
+            <button type="submit">Register</button>
+        </form>
+    </div>
 
+    <div id="loginContainer">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+   <div id="linkSubmissionContainer" style="display:none;">
+        <h1>Submit a Link</h1>
+        <form id="submitLinkForm">
+            <input type="text" id="url" placeholder="URL" required>
+            <input type="text" id="title" placeholder="Title" required>
+            <textarea id="description" placeholder="Description"></textarea>
+            <input type="text" id="tags" placeholder="Tags (comma-separated)">
+            <button type="submit">Submit Link</button>
+        </form>
+    </div>
+
+    <div id="linksDisplayContainer" style="display:none;">
+        <h1>Your Links</h1>
+        <ul id="linksList"></ul>
+    </div>
+
+
+    <div id="message"></div>
+    
+    <script src="/public/app.js"></script>
 </body>
 </html>
+ 
+

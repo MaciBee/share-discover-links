@@ -3,20 +3,22 @@ require('dotenv').config();
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const mysql = require('mysql2');
-const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 const { body, validationResult } = require('express-validator');
 const path = require('path'); // Import the path module
+const cookieParser = require('cookie-parser');
+
 
 // Create the Express application
 const app = express();
+
 app.use(express.json());
 app.use(cookieParser());
-
-///
-// Serve static files from the 'public' directory
+// Serve static files from the 'public' directory- added for /public 
 app.use(express.static(path.join(__dirname, 'public')));
+
+
 
 // Setup database connection pool
 const pool = mysql.createPool({

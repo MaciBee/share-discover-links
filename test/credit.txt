@@ -1,4 +1,0 @@
-Links to resources that helped 
-html: SlayingtheDragon 
-https://www.youtube.com/watch?v=j5Oh3EawGkM
-https://web.dev/learn/html/attributes

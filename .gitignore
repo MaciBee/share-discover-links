@@ -15,3 +15,7 @@ tmp/
 
 #
 .env.save
+
+node_modules/
+.env
+*.log
