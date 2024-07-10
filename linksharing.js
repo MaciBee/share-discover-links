@@ -8,6 +8,7 @@ const MySQLStore = require('express-mysql-session')(session);
 const { body, validationResult } = require('express-validator');
 const path = require('path'); // Import the path module
 const cookieParser = require('cookie-parser');
+const cors = require('cors'); // Make sure to npm install cors
 
 
 // Create the Express application
@@ -15,6 +16,8 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors()); // This opens up all routes to all origins. For production, configure it appr>
+
 // Serve static files from the 'public' directory- added for /public 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -75,23 +78,34 @@ app.post('/api/register', [
         res.status(500).json({ success: false, message: 'Registration failed' });
     }
 });
+////
 
 // User login endpoint
-app.post('/api/login', async (req, res) => {
+app.post('/api/login', [
+    body('username').trim().isString().isLength({ min: 1 }).withMessage('Username is required'),
+    body('password').isString().withMessage('Password is required')
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ success: false, errors: errors.array() });
+    }
+
     const { username, password } = req.body;
     try {
         const [users] = await pool.query('SELECT * FROM users WHERE username = ?', [username]);
-        if (users.length === 0) return res.sendStatus(401);
+        if (users.length === 0) {
+            return res.status(401).json({ success: false, message: 'Incorrect username or password' });
+        }
         const user = users[0];
         if (await bcrypt.compare(password, user.password_hash)) {
-            req.session.userId = user.id;
-            res.json({ message: 'Login successful' });
+            req.session.userId = user.id; // Assumes session setup is correctly done
+            res.json({ success: true, message: 'Login successful' });
         } else {
-            res.sendStatus(401);
+            res.status(401).json({ success: false, message: 'Incorrect username or password' });
         }
     } catch (error) {
         console.error('Error logging in:', error);
-        res.sendStatus(500);
+        res.status(500).json({ success: false, message: 'Login failed' });
     }
 });
 
