@@ -8,7 +8,7 @@ const MySQLStore = require('express-mysql-session')(session);
 const { body, validationResult } = require('express-validator');
 const path = require('path'); // Import the path module
 const cookieParser = require('cookie-parser');
-const cors = require('cors'); // Make sure to npm install cors
+const cors = require('cors'); // installed to fix 500 error when registering 
 
 
 // Create the Express application
