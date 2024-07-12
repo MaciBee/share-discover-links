@@ -8,7 +8,7 @@ const MySQLStore = require('express-mysql-session')(session);
 const { body, validationResult } = require('express-validator');
 const path = require('path'); // Import the path module
 const cookieParser = require('cookie-parser');
-const cors = require('cors'); // installed to fix 500 error when registering 
+//const cors = require('cors'); // installed to fix 500 error when registering ///jk didn't need it after all- disabled. too many security concerns
 
 
 // Create the Express application
@@ -16,7 +16,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors()); // This opens up all routes to all origins. For production, configure it appr>
+///app.use(cors()); // This opens up all routes to all origins. ///disabled see^^
 
 // Serve static files from the 'public' directory- added for /public 
 app.use(express.static(path.join(__dirname, 'public')));
