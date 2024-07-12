@@ -31,58 +31,75 @@ document.addEventListener('DOMContentLoaded', function() {
 function register() {
     const username = document.getElementById('registerUsername').value;
     const password = document.getElementById('registerPassword').value;
+
     fetch('/api/register', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ username, password })
     })
-    .then(response => response.json())
-    .then(data => displayMessage(data.message))
-    .catch(error => displayMessage('Failed to register', true));
+    .then(response => {
+        if (!response.ok) throw new Error('Registration failed');
+        return response.json();
+    })
+    .then(data => {
+        displayMessage(data.message);
+        // Clear the input fields after successful registration
+        document.getElementById('registerUsername').value = '';
+        document.getElementById('registerPassword').value = '';
+    })
+    .catch(error => {
+        displayMessage(error.message, true);
+    });
 }
-
+////changed  for clear inpu 
 function login() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
+
     fetch('/api/login', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ username, password })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message === 'Login successful') {
-            displayMessage(data.message);
-            document.getElementById('linkSubmissionContainer').style.display = 'block';
-            document.getElementById('linksDisplayContainer').style.display = 'block';
-            fetchLinks(); // Fetch links after login
-        } else {
-            displayMessage(data.message, true);
-        }
+    .then(response => {
+        if (!response.ok) throw new Error('Login failed');
+        return response.json();
     })
-    .catch(error => displayMessage('Login failed', true));
+    .then(data => {
+        displayMessage(data.message);
+        document.getElementById('loginForm').reset(); // Reset login form
+        document.getElementById('linkSubmissionContainer').style.display = 'block';
+        document.getElementById('linksDisplayContainer').style.display = 'block';
+        fetchLinks(); // Fetch links after successful login
+    })
+    .catch(error => {
+        displayMessage(error.message, true);
+    });
 }
-
+///
 function submitLink() {
     const url = document.getElementById('url').value;
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
     const tags = document.getElementById('tags').value.split(',').map(tag => tag.trim());
+
     fetch('/api/submit-link', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ url, title, description, tags })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            displayMessage(data.message);
-            fetchLinks(); // Refresh links list after successful submission
-        } else {
-            displayMessage(data.message, true);
-        }
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to submit link');
+        return response.json();
     })
-    .catch(error => displayMessage('Failed to submit link', true));
+    .then(data => {
+        displayMessage(data.message);
+        document.getElementById('submitLinkForm').reset(); // Clear the link submission form
+        fetchLinks(); // Refresh links list after successful submission
+    })
+    .catch(error => {
+        displayMessage(error.message, true);
+    });
 }
 
 function fetchLinks() {
