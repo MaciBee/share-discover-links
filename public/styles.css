@@ -115,3 +115,50 @@ p {
         font-size: 1rem;
     }
 }
+
+/*had delete feature here but i deleted it.hahhaaha */
+
+/*y2k? */
+body {
+    background-color: #C0C0C0; /* Classic Microsoft silver-grey */
+    color: #000000; /* Standard text color for readability */
+    font-family: 'Comic Sans MS', 'Chalkboard', sans-serif; /* Keeping the playful font */
+}
+
+
+#linksList {
+    padding: 0;
+    list-style-type: none;
+}
+
+#linksList li {
+    background-color: #ff69b4; /* Bright pink for that Y2K pop */
+    padding: 2px;
+    margin-bottom: 3px;
+    border: 1px dashed #ffffff; /* White dashed border for a bit of flair */
+    border-radius: 3px;
+    font-size: 0.5em; /* Smaller font size for the text */
+
+}
+
+#linksList li a {
+    color: #00ff00; /* Neon green links */
+    text-decoration: none;
+    font-size: 1.2em;
+}
+
+#linksList li a:hover {
+    text-decoration: underline;
+    color: #ffff00; /* Change to yellow on hover */
+}
+
+#linksList span {
+    color: #ffffff; /* Keep tags white for contrast */
+    display: block; /* Block display for better control */
+}
+
+#message {
+    color: #ffff00; /* Messages in yellow to stand out */
+    padding: 20px;
+    text-align: center;
+}

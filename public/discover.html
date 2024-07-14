@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Discover</title>
+    <link rel="stylesheet" href="/public/styles.css"> 
 </head>
 <body>
-    <div id="registerContainer">
-<h1> <center> A bookmarking site to save links. </center><h1> 
-<h3><center> beta v 0.1 </center></h3>
-<p><center>please register an account and login 2 start saving.
-Remember ur info bc we can't reset it yet.</center></p>
- 
+<div id="authContainer">
 
+<h1> <center> A bookmarking site to save links. </center><h1> 
+
+    <div id="registerContainer">
         <h2>Register</h2>
         <form id="registerForm">
             <input type="text" id="registerUsername" placeholder="Username" required>
@@ -29,8 +28,8 @@ Remember ur info bc we can't reset it yet.</center></p>
         </form>
     </div>
 
-   <div id="linkSubmissionContainer" style="display:none;">
-        <h1>Submit a Link</h1>
+   <div id="linkSubmissionContainer" style="display:none;"> 
+        <h2>Submit a Link</h2>
         <form id="submitLinkForm">
             <input type="text" id="url" placeholder="URL" required>
             <input type="text" id="title" placeholder="Title" required>
@@ -39,9 +38,8 @@ Remember ur info bc we can't reset it yet.</center></p>
             <button type="submit">Submit Link</button>
         </form>
     </div>
-
     <div id="linksDisplayContainer" style="display:none;">
-        <h1>Your Links</h1>
+        <h4><center>Your Links</center></h4>
         <ul id="linksList"></ul>
     </div>
 
