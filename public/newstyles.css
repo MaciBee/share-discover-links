@@ -1,0 +1,52 @@
+body {
+    background-color: #000080; /* Deep blue, typical of early web design */
+    color: #ffffff;
+    font-family: 'Comic Sans MS', 'Chalkboard', sans-serif; /* Iconically 90s font */
+}
+
+#linksList {
+    padding: 0;
+    list-style-type: none;
+}
+
+#linksList li {
+    background-color: #ff69b4; /* Bright pink for that Y2K pop */
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px dashed #ffffff; /* White dashed border for a bit of flair */
+    border-radius: 5px;
+}
+
+#linksList li a {
+    color: #00ff00; /* Neon green links */
+    text-decoration: none;
+    font-size: 1.2em;
+}
+
+#linksList li a:hover {
+    text-decoration: underline;
+    color: #ffff00; /* Change to yellow on hover */
+}
+
+#linksList span {
+    color: #ffffff; /* Keep tags white for contrast */
+    display: block; /* Block display for better control */
+}
+
+#message {
+    color: #ffff00; /* Messages in yellow to stand out */
+    padding: 20px;
+    text-align: center;
+}
+
+
+
+body {
+    background-image: url('pixel-stars-background.gif'); /* A tiled pixel background */
+    background-repeat: repeat;
+}
+
+#linksList li {
+    background-image: url('neon-frame.png'); /* Neon frame around each link */
+    background-size: cover;
+}
