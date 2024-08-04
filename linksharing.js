@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const mysql = require('mysql2');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
+//const { body, validationResult } = require('express-validator'); causing body error?
 const { body, validationResult } = require('express-validator');
 const path = require('path'); // Import the path module
 const cookieParser = require('cookie-parser');
@@ -114,16 +115,23 @@ app.post('/api/submit-link', [
     body('url').isURL({ protocols: ['http', 'https'], require_protocol: true }),
     body('title').isLength({ max: 255 }),
     body('description').optional().isString(),
-    body('tags').optional().isArray()
+    body('tags').optional().isArray(),
+    body('isPublic').isBoolean()  ///public links
 ], async (req, res) => {
+/// error handle 
+    console.log("Request data:", req.body); // Log the entire request body
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+///3rror handle
+        console.error("Validation errors:", errors.array()); // Log validation errors
+
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { url, title, description, tags } = req.body;
+    const { url, title, description, tags, isPublic } = req.body; /// Capture the isPublic flag
     try {
-        const [linkResult] = await pool.query('INSERT INTO links (user_id, url, title, description) VALUES (?, ?, ?, ?)', [req.session.userId, url, title, description]);
+        const [linkResult] = await pool.query('INSERT INTO links (user_id, url, title, description, is_public) VALUES (?, ?, ?, ?, ?)', [req.session.userId, url, title, description, isPublic]);
         const linkId = linkResult.insertId;
 
         if (tags && tags.length > 0) {
@@ -160,6 +168,34 @@ app.get('/api/my-links', async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to fetch links' });
     }
 });
+
+///
+// Fetch all public links endpoint
+app.get('/api/public-links', async (req, res) => {
+    try {
+        // This SQL query assumes you have a way to determine which links are public
+        // For example, there might be an 'is_public' column in your 'links' table
+        const [links] = await pool.query(`
+            SELECT l.id, l.url, l.title, l.description, GROUP_CONCAT(t.name ORDER BY t.name ASC) AS tags
+            FROM links l
+            LEFT JOIN link_tags lt ON l.id = lt.link_id
+            LEFT JOIN tags t ON lt.tag_id = t.id
+            WHERE l.is_public = 1
+            GROUP BY l.id`);
+        
+        // Mapping over links to ensure tags are split into arrays if not already
+        const formattedLinks = links.map(link => ({
+            ...link,
+            tags: link.tags ? link.tags.split(',') : []
+        }));
+
+        res.json({ success: true, links: formattedLinks });
+    } catch (error) {
+        console.error('Error fetching public links:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch public links' });
+    }
+});
+
 
 // Start server
 const PORT = process.env.PORT || 3001;

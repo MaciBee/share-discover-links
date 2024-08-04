@@ -81,12 +81,14 @@ function submitLink() {
     const url = document.getElementById('url').value;
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
+    const isPublic = document.getElementById('isPublic').checked;  /// Get the status of the checkbox in public
     const tags = document.getElementById('tags').value.split(',').map(tag => tag.trim());
+
 
     fetch('/api/submit-link', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ url, title, description, tags })
+        body: JSON.stringify({ url, title, description, tags, isPublic }) /// Include isPublic in the request body
     })
     .then(response => {
         if (!response.ok) throw new Error('Failed to submit link');
