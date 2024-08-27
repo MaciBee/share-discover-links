@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs');
 const mysql = require('mysql2');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
-//const { body, validationResult } = require('express-validator'); causing body error?
 const { body, validationResult } = require('express-validator');
 const path = require('path'); // Import the path module
 const cookieParser = require('cookie-parser');
@@ -115,6 +114,7 @@ app.post('/api/submit-link', [
     body('url').isURL({ protocols: ['http', 'https'], require_protocol: true }),
     body('title').isLength({ max: 255 }),
     body('description').optional().isString(),
+    body('category_id').isInt().withMessage('Valid category ID is required'),
     body('tags').optional().isArray(),
     body('isPublic').isBoolean()  ///public links
 ], async (req, res) => {
@@ -129,11 +129,20 @@ app.post('/api/submit-link', [
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { url, title, description, tags, isPublic } = req.body; /// Capture the isPublic flag
+
+//newer  code 4 categories
+ // Capture the incoming data from the request body correctly
+    const { url, title, description, category_id, tags, isPublic } = req.body;
+
     try {
-        const [linkResult] = await pool.query('INSERT INTO links (user_id, url, title, description, is_public) VALUES (?, ?, ?, ?, ?)', [req.session.userId, url, title, description, isPublic]);
+        // Correct the SQL query to properly insert all data, including 'is_public'
+        const [linkResult] = await pool.query(
+            'INSERT INTO links (user_id, url, title, description, category_id, is_public) VALUES (?, ?, ?, ?, ?, ?)', 
+            [req.session.userId, url, title, description, category_id, isPublic || false]
+        );
         const linkId = linkResult.insertId;
 
+        // Handle tags if they are provided
         if (tags && tags.length > 0) {
             for (const tag of tags) {
                 await pool.query('INSERT INTO tags (name) VALUES (?) ON DUPLICATE KEY UPDATE id=id', [tag]);
@@ -148,45 +157,167 @@ app.post('/api/submit-link', [
     }
 });
 
-// Fetch all links for authenticated user
+//fetch links 
 app.get('/api/my-links', async (req, res) => {
     if (!req.session.userId) {
-        return res.sendStatus(401);
+        return res.sendStatus(401); // Unauthorized if not logged in
     }
     try {
         const [links] = await pool.query(`
-            SELECT l.*, GROUP_CONCAT(t.name ORDER BY t.name ASC) AS tags
-            FROM links l
-            LEFT JOIN link_tags lt ON l.id = lt.link_id
-            LEFT JOIN tags t ON lt.tag_id = t.id
-            WHERE l.user_id = ?
-            GROUP BY l.id`, [req.session.userId]);
+		SELECT l.*, GROUP_CONCAT(t.name ORDER BY t.name ASC) AS tags, c.name AS category_name
+		FROM links l
+		LEFT JOIN link_tags lt ON l.id = lt.link_id
+		LEFT JOIN tags t ON lt.tag_id = t.id
+		LEFT JOIN categories c ON l.category_id = c.id
+		WHERE l.user_id = ? AND l.is_public = 0  
+		GROUP BY l.id;
+        `, [req.session.userId]);
 
-        res.json({ success: true, links });
-    } catch (error) {
-        console.error('Error fetching links:', error);
-        res.status(500).json({ success: false, message: 'Failed to fetch links' });
-    }
-});
-
-///
-// Fetch all public links endpoint
-app.get('/api/public-links', async (req, res) => {
-    try {
-        // This SQL query assumes you have a way to determine which links are public
-        // For example, there might be an 'is_public' column in your 'links' table
-        const [links] = await pool.query(`
-            SELECT l.id, l.url, l.title, l.description, GROUP_CONCAT(t.name ORDER BY t.name ASC) AS tags
-            FROM links l
-            LEFT JOIN link_tags lt ON l.id = lt.link_id
-            LEFT JOIN tags t ON lt.tag_id = t.id
-            WHERE l.is_public = 1
-            GROUP BY l.id`);
-        
-        // Mapping over links to ensure tags are split into arrays if not already
+        // Formatting links to ensure proper JSON structure for tags
         const formattedLinks = links.map(link => ({
             ...link,
             tags: link.tags ? link.tags.split(',') : []
+        }));
+
+        res.json({ success: true, links: formattedLinks });
+    } catch (error) {
+        console.error('Error fetching private links:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch private links' });
+    }
+});
+
+// old code w.o categories- commented out on agu 5th
+//    const { url, title, description, category, tags, isPublic } = req.body;
+//    try {
+//        const [linkResult] = await pool.query('INSERT INTO links (user_id, url, title, description, is_public) VALUES (?, ?, ?, ?, ?)', [req.session.userId, url, title, description, isPublic]);
+//        const linkId = linkResult.insertId;
+
+//        if (tags && tags.length > 0) {
+//            for (const tag of tags) {
+//                await pool.query('INSERT INTO tags (name) VALUES (?) ON DUPLICATE KEY UPDATE id=id', [tag]);
+//                await pool.query('INSERT INTO link_tags (link_id, tag_id) SELECT ?, id FROM tags WHERE name = ?', [linkId, tag]);
+//            }
+//        }
+
+//        res.json({ success: true, message: 'Link submitted successfully', linkId: linkId });
+//    } catch (error) {
+//        console.error('Error submitting link:', error);
+//        res.status(500).json({ success: false, message: 'Error submitting link' });
+//    }
+//});
+
+
+// Fetch all links for authenticated user with categories 8.5.24
+//app.get('/api/my-links', async (req, res) => {
+//    if (!req.session.userId) {
+//        return res.sendStatus(401);  // Unauthorized if not logged in
+//    }
+//    try {
+//        const [links] = await pool.query(`
+//            SELECT l.*, GROUP_CONCAT(t.name ORDER BY t.name ASC) AS tags, c.name AS category
+//            FROM links l
+//            LEFT JOIN link_tags lt ON l.id = lt.link_id
+//            LEFT JOIN tags t ON lt.tag_id = t.id
+//            LEFT JOIN categories c ON l.category_id = c.id  
+//            WHERE l.user_id = ? AND l.is_private = 1  
+//            GROUP BY l.id
+//        `, [req.session.userId]);
+//        res.json({ success: true, links });
+//    } catch (error) {
+//        console.error('Error fetching private links:', error);
+//        res.status(500).json({ success: false, message: 'Failed to fetch links' });
+//    }
+//});
+
+//commented out version of above code-fetch links for authenticated usrs- bc it doesnt inlcude categories 
+//app.get('/api/my-links', async (req, res) => {
+//    if (!req.session.userId) {
+//        return res.sendStatus(401);
+//    }
+//    try {
+//        const [links] = await pool.query(`
+//            SELECT l.*, GROUP_CONCAT(t.name ORDER BY t.name ASC) AS tags
+//            FROM links l
+//            LEFT JOIN link_tags lt ON l.id = lt.link_id
+//            LEFT JOIN tags t ON lt.tag_id = t.id
+//            WHERE l.user_id = ?
+//            GROUP BY l.id`, [req.session.userId]);
+
+//        res.json({ success: true, links });
+//    } catch (error) {
+//        console.error('Error fetching links:', error);
+//        res.status(500).json({ success: false, message: 'Failed to fetch links' });
+//    }
+//});
+
+///commented out bc categories werent in public links 8.6.24
+// Fetch all public links endpoint
+//app.get('/api/public-links', async (req, res) => {
+//    try {
+        // This SQL query assumes you have a way to determine which links are public
+        // For example, there might be an 'is_public' column in your 'links' table
+//       const [links] = await pool.query(`
+//            SELECT l.id, l.url, l.title, l.description, GROUP_CONCAT(t.name ORDER BY t.name ASC) AS tags
+//            FROM links l
+//            LEFT JOIN link_tags lt ON l.id = lt.link_id
+//            LEFT JOIN tags t ON lt.tag_id = t.id
+//            WHERE l.is_public = 1
+//            GROUP BY l.id`);
+ //       
+        // Mapping over links to ensure tags are split into arrays if not already
+//        const formattedLinks = links.map(link => ({
+//           ...link,
+//            tags: link.tags ? link.tags.split(',') : []
+//        }));
+
+//        res.json({ success: true, links: formattedLinks });
+//    } catch (error) {
+//        console.error('Error fetching public links:', error);
+//        res.status(500).json({ success: false, message: 'Failed to fetch public links' });
+//    }
+//});
+
+///fetch public links w. categories  8.6.24
+//app.get('/api/public-links', async (req, res) => {
+//    try {
+//        const [links] = await pool.query(`
+//            SELECT l.id, l.url, l.title, l.description, l.is_public, c.name AS category_name
+//            FROM links l
+//            LEFT JOIN categories c ON l.category_id = c.id
+//            WHERE l.is_public = 1
+//            GROUP BY l.id
+//        `);
+        
+//        res.json({
+//            success: true,
+//            links: links.map(link => ({
+//                ...link,
+//                tags: link.tags ? link.tags.split(',') : [] // Assuming tags are stored as a comma-separated string
+//            }))
+//        });
+//    } catch (error) {
+//        console.error('Error fetching public links:', error);
+//        res.status(500).json({ success: false, message: 'Failed to fetch public links' });
+//    }
+//});
+
+//categories display?
+app.get('/api/public-links', async (req, res) => {
+    try {
+        const [links] = await pool.query(`
+            SELECT l.id, l.url, l.title, l.description, l.is_public, c.name AS category_name, GROUP_CONCAT(t.name ORDER BY t.name ASC) AS tags
+            FROM links l
+            LEFT JOIN link_tags lt ON l.id = lt.link_id
+            LEFT JOIN tags t ON lt.tag_id = t.id
+            LEFT JOIN categories c ON l.category_id = c.id
+            WHERE l.is_public = 1
+            GROUP BY l.id
+        `);
+
+        // Map over links to ensure tags are split into arrays if not already
+        const formattedLinks = links.map(link => ({
+            ...link,
+            tags: link.tags ? link.tags.split(',') : []  
         }));
 
         res.json({ success: true, links: formattedLinks });

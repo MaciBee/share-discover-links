@@ -81,6 +81,7 @@ function submitLink() {
     const url = document.getElementById('url').value;
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
+    const category_id = document.getElementById('category_id').value; // Ensure this element exists and captures the correct ID
     const isPublic = document.getElementById('isPublic').checked;  /// Get the status of the checkbox in public
     const tags = document.getElementById('tags').value.split(',').map(tag => tag.trim());
 
@@ -88,7 +89,7 @@ function submitLink() {
     fetch('/api/submit-link', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ url, title, description, tags, isPublic }) /// Include isPublic in the request body
+        body: JSON.stringify({ url, title, description, tags, category_id, isPublic }) /// Include isPublic in the request body and category 8.5.24
     })
     .then(response => {
         if (!response.ok) throw new Error('Failed to submit link');
@@ -101,6 +102,54 @@ function submitLink() {
     })
     .catch(error => {
         displayMessage(error.message, true);
+    });
+}
+//display grouped links  8.5.24
+
+function displayLinks(links) {
+    const linksList = document.getElementById('linksList');
+    if (!linksList) {
+        console.error('linksList element not found');
+        return;
+    }
+
+    linksList.innerHTML = '';  // Clear existing links
+
+    // Group links by category
+    const groupedLinks = links.reduce((acc, link) => {
+        const category = link.category || 'Uncategorized'; // Default to 'Uncategorized' if no category is provided
+        if (!acc[category]) {
+            acc[category] = [];
+        }
+        acc[category].push(link);
+        return acc;
+    }, {});
+
+    // Display grouped links
+    Object.entries(groupedLinks).forEach(([category, categoryLinks]) => {
+        const categoryHeader = document.createElement('h3');
+        categoryHeader.textContent = category;
+        linksList.appendChild(categoryHeader);
+
+        const linksContainer = document.createElement('div');
+        linksContainer.className = 'category-container';
+
+        categoryLinks.forEach(link => {
+            const linkElement = document.createElement('div');
+            linkElement.className = 'link-item';
+
+            let tagsDisplay = link.tags && link.tags.length ? `Tags: ${link.tags.join(', ')}` : 'No tags';
+            let descriptionHtml = link.description ? `<div class="link-description">${link.description}</div>` : '';
+
+            linkElement.innerHTML = `
+                <div class="link-title"><a href="${link.url}" target="_blank">${link.title}</a></div>
+                ${descriptionHtml}
+                <div class="link-tags">${tagsDisplay}</div>
+            `;
+            linksContainer.appendChild(linkElement);
+        });
+
+        linksList.appendChild(linksContainer);
     });
 }
 
@@ -125,6 +174,7 @@ function fetchLinks() {
     })
     .catch(error => displayMessage('Failed to fetch links', true));
 }
+
 
 function displayMessage(message, isError = false) {
     const messageDiv = document.getElementById('message');

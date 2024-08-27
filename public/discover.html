@@ -6,10 +6,10 @@
 </head>
 <body>
     <div id="registerContainer">
-<h1> <center> your friendly bookmarking+ site :D</center><h1> 
-<h2> <center> hello! here's a site to save your links and share with others what you find </center> </p>
-<h3> <center> register -> login -> save -> share </h3>
- 
+<h3> <center> your friendly bookmarking + discovery site :D</center><h3> 
+<h4> <center> register to start savings your links and recommend links to <a href="/public" class="nav-link"> public page  </a>   </center> </h4>
+<!--<h3> <center> register -> login -> save -> share </h3> -->
+<h5> <center> beta v 0.3 </center> </h5>
 
         <h2>Register</h2>
         <form id="registerForm">
@@ -34,9 +34,20 @@
             <input type="text" id="url" placeholder="URL" required>
             <input type="text" id="title" placeholder="Title" required>
             <textarea id="description" placeholder="Description"></textarea>
+	<select id="category_id" name="category_id" required>
+	        <option value="">Select a Category</option>
+        	<option value="6">Resources</option>
+	        <option value="7">Educational</option>
+        	<option value="8">Tutorial</option>
+        	<option value="9">Entertainment</option>
+        	<option value="10">Other</option>
+       </select>
+<!--categories start at 6. 1-5 are gone -->
             <input type="text" id="tags" placeholder="Tags (comma-separated)">
-            <input type="checkbox" id="isPublic" checked> Share publicly
-            <button type="submit">Submit Link</button>
+	    <label>
+            	<input type="checkbox" id="isPublic" checked> Share publicly
+            </label>
+            <button type="submit">Save Link</button>
         </form>
     </div>
 
