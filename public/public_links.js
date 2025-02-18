@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', function() {
     fetchPublicLinks(); // Initiate fetching and displaying public links on page load
 });
@@ -12,7 +13,7 @@ function fetchPublicLinks() {
             throw new Error('Network response was not ok');
         }
         return response.json();
-    })
+   })
     .then(data => {
         if (data.success) {
             displayPublicLinks(data.links);
@@ -35,8 +36,7 @@ function displayPublicLinks(links) {
         return;
     }
 
-    linksList.innerHTML = ''; // Clear existing links
-
+   linksList.innerHTML = ''; // Clear existing links
     links.forEach(link => {
         const linkElement = document.createElement('div');
         linkElement.className = 'link-item';
@@ -50,13 +50,13 @@ function displayPublicLinks(links) {
             categoryElement.textContent = `Category: ${link.category_name}`;
             categoryElement.style.fontWeight = 'bold';
             linkElement.appendChild(categoryElement);
-        }
+       }
 
         if (link.description) {
             const descriptionElement = document.createElement('p');
             descriptionElement.textContent = link.description;
             linkElement.appendChild(descriptionElement);
-        }
+       }
 
         const urlElement = document.createElement('a');
         urlElement.href = link.url;
@@ -65,8 +65,12 @@ function displayPublicLinks(links) {
         linkElement.appendChild(urlElement);
 
         linksList.appendChild(linkElement);
-    });
+   });
 }
+//end of 10.26.24 code edit 
+
+
+
 
 
 

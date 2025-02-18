@@ -104,26 +104,30 @@ function submitLink() {
         displayMessage(error.message, true);
     });
 }
+
+
+// code was changed in 10.26.24 and pasted old code and took it out bc it was claude and ive no fucking idea what i'm doing
+
 //display grouped links  8.5.24
 
 function displayLinks(links) {
     const linksList = document.getElementById('linksList');
     if (!linksList) {
-        console.error('linksList element not found');
+       console.error('linksList element not found');
         return;
     }
 
     linksList.innerHTML = '';  // Clear existing links
 
-    // Group links by category
+   // Group links by category
     const groupedLinks = links.reduce((acc, link) => {
-        const category = link.category || 'Uncategorized'; // Default to 'Uncategorized' if no category is provided
+        const category = link.category || 'Uncategorized'; // Default to 'Uncategorized' if no category is provided//
         if (!acc[category]) {
             acc[category] = [];
         }
         acc[category].push(link);
         return acc;
-    }, {});
+   }, {});
 
     // Display grouped links
     Object.entries(groupedLinks).forEach(([category, categoryLinks]) => {
@@ -153,6 +157,8 @@ function displayLinks(links) {
     });
 }
 
+
+
 function fetchLinks() {
     fetch('/api/my-links', {
         method: 'GET',
@@ -161,20 +167,41 @@ function fetchLinks() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            const linksList = document.getElementById('linksList');
-            linksList.innerHTML = '';
-            data.links.forEach(link => {
-                const li = document.createElement('li');
-                li.textContent = `${link.title} - ${link.url} (Tags: ${link.tags})`;
-                linksList.appendChild(li);
-            });
-        } else {
+            displayLinks(data.links);
+       } else {
             displayMessage('Failed to fetch links', true);
         }
     })
     .catch(error => displayMessage('Failed to fetch links', true));
 }
+//end of change made in 10.26 
 
+
+
+
+//10.14.24 commented bc of inconsitency with display links :>> ?
+//function fetchLinks() {
+  //  fetch('/api/my-links', {
+    //    method: 'GET',
+    //    headers: {'Content-Type': 'application/json'}
+   // })
+   // .then(response => response.json())
+   // .then(data => {
+    //    if (data.success) {
+      //      const linksList = document.getElementById('linksList');
+        //    linksList.innerHTML = '';
+          //  data.links.forEach(link => {
+            //    const li = document.createElement('li');
+             //   li.textContent = `${link.title} - ${link.url} (Tags: ${link.tags})`;
+              //  linksList.appendChild(li);
+           // });
+       // } else {
+         //   displayMessage('Failed to fetch links', true);
+        //}
+    //})
+   // .catch(error => displayMessage('Failed to fetch links', true));
+//}
+//fml who knows>>
 
 function displayMessage(message, isError = false) {
     const messageDiv = document.getElementById('message');
