@@ -1,4 +1,56 @@
-* {
+*{
+	margin: 0;
+	padding: 0; 
+	box-sizing: border-box;
+	font-family: 'Poppins', sans-serif; 
+}
+body{
+	display: flex; 
+	height: 100vh;
+	justify-content: center; 
+	align-items: center; 
+	background: linear-gradient(135deg, #71b7e6, #9b59b6);
+	background-attachment: fixed; 
+}
+
+/* making for public links - Targeting all anchor tags inside the links list */
+#publicLinksList a {
+    text-decoration: none; /* Removes the underline */
+    color: #283618; /* Primary color for the text */
+    font-weight: bold; /* Makes the text bold */
+}
+
+/* Additional styling to improve appearance */
+#publicLinksList .link-item {
+    padding: 10px;
+    margin-bottom: 5px;
+/*    background-color: #FEFAE0;  Secondary color for background */
+    border-radius: 5px;
+}
+
+/* to try  Hover effect to indicate interactivity */
+#publicLinksList a:hover {
+    text-decoration: underline; /* Adds underline on hover */
+    color: #608C38; /* Accent color for hover state */
+}
+
+.link-description {
+    display: none; /* Hidden by default */
+    color: #283618;
+    font-size: 0.95em;
+    margin-top: 5px;
+}
+
+.link-card:hover .link-description {
+    display: block; /* Show on hover */
+}
+
+
+
+
+/*
+older code 
+for y2k look in early july* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -115,3 +167,5 @@ p {
         font-size: 1rem;
     }
 }
+
+*/
