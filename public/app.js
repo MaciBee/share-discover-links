@@ -121,8 +121,11 @@ function displayLinks(links) {
 
    // Group links by category
     const groupedLinks = links.reduce((acc, link) => {
-        const category = link.category || 'Uncategorized'; // Default to 'Uncategorized' if no category is provided//
-        if (!acc[category]) {
+//3.15.25 changed below line to display links 
+//        const category = link.category || 'Uncategorized'; // Default to 'Uncategorized' if no category is provided//
+// old code was above code- mistook category  = link.category instead of link.category = link.category_name was different and broke the code for months. Principle correctly cross-checking the names and ids (the table stores nmeric ids ONLY so needs idetical match. :0  
+    const category = link.category_name || 'Uncategorized';
+      if (!acc[category]) {
             acc[category] = [];
         }
         acc[category].push(link);
