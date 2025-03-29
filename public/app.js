@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
+	// added this next line of code on 3.24.25 this see if category filtering is working
+    console.log("Current path is:", window.location.pathname);
+
     // Grab references to each form and the display container
     const registerForm = document.getElementById('registerForm');
     const loginForm = document.getElementById('loginForm');
@@ -108,40 +111,58 @@ function submitLink() {
 
 // code was changed in 10.26.24 and pasted old code and took it out bc it was claude and ive no fucking idea what i'm doing
 
-//display grouped links  8.5.24
-
+//first display grouped links fixed on  8.5.24
+//second grup links fix 3.28.25: include group links, clickable category and add bookshelf xo
 function displayLinks(links) {
     const linksList = document.getElementById('linksList');
     if (!linksList) {
-       console.error('linksList element not found');
+        console.error('linksList element not found');
         return;
     }
 
-    linksList.innerHTML = '';  // Clear existing links
+    linksList.innerHTML = ''; // Clear existing links
 
-   // Group links by category
+    // Group links by category
     const groupedLinks = links.reduce((acc, link) => {
-//3.15.25 changed below line to display links 
-//        const category = link.category || 'Uncategorized'; // Default to 'Uncategorized' if no category is provided//
-// old code was above code- mistook category  = link.category instead of link.category = link.category_name was different and broke the code for months. Principle correctly cross-checking the names and ids (the table stores nmeric ids ONLY so needs idetical match. :0  
-    const category = link.category_name || 'Uncategorized';
-      if (!acc[category]) {
+        const category = link.category_name || 'Uncategorized';
+        if (!acc[category]) {
             acc[category] = [];
         }
         acc[category].push(link);
         return acc;
-   }, {});
+    }, {});
+
+    // Sort categories in desired order
+    let categoryNames = Object.keys(groupedLinks);
+
+    const preferredOrder = ['Bookshelf', 'Resources', 'Educational', 'Tutorial', 'Entertainment', 'Other', 'Uncategorized'];
+
+    categoryNames.sort((a, b) => {
+        return preferredOrder.indexOf(a) - preferredOrder.indexOf(b);
+    });
 
     // Display grouped links
-    Object.entries(groupedLinks).forEach(([category, categoryLinks]) => {
+    categoryNames.forEach(category => {
+        // Create clickable category header
         const categoryHeader = document.createElement('h3');
         categoryHeader.textContent = category;
+        categoryHeader.style.cursor = 'pointer';
+        categoryHeader.className = 'collapsible-header';
         linksList.appendChild(categoryHeader);
 
-        const linksContainer = document.createElement('div');
-        linksContainer.className = 'category-container';
+        // Create container for links, initially hidden
+        const categoryContainer = document.createElement('div');
+        categoryContainer.className = 'category-container';
+        categoryContainer.style.display = 'none';
 
-        categoryLinks.forEach(link => {
+        // Click to show/hide links
+        categoryHeader.addEventListener('click', () => {
+            const isVisible = categoryContainer.style.display === 'block';
+            categoryContainer.style.display = isVisible ? 'none' : 'block';
+        });
+
+        // Add all links for this category
+        groupedLinks[category].forEach(link => {
             const linkElement = document.createElement('div');
             linkElement.className = 'link-item';
 
@@ -153,14 +174,14 @@ function displayLinks(links) {
                 ${descriptionHtml}
                 <div class="link-tags">${tagsDisplay}</div>
             `;
-            linksContainer.appendChild(linkElement);
+            categoryContainer.appendChild(linkElement);
         });
 
-        linksList.appendChild(linksContainer);
+        linksList.appendChild(categoryContainer);
     });
 }
 
-
+///
 
 function fetchLinks() {
     fetch('/api/my-links', {
