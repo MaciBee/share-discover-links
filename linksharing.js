@@ -58,6 +58,12 @@ app.get('/discover', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'discover.html'));
 });
 
+//category route for public.html added 3.28.25 xo 
+app.get('/category/:category', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'category.html'));
+});
+
+
 // Register user endpoint
 app.post('/api/register', [
     body('username').isString(),
