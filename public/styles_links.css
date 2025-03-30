@@ -1,0 +1,56 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #fefefe;
+    color: #333;
+    padding: 10px;
+}
+
+h1, h2, h3 {
+    color: #222;
+}
+
+.link-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.link-title a {
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+.link-title a:hover {
+    text-decoration: underline;
+}
+
+.link-description {
+    font-size: 0.95em;
+    color: #555;
+    margin: 5px 0;
+}
+
+.link-tags {
+    font-size: 0.85em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.category-container {
+    margin-bottom: 20px;
+    padding-left: 10px;
+    border-left: 2px solid #ccc;
+}
+
+.collapsible-header {
+    cursor: pointer;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-size: 1.1em;
+    color: #2c3e50;
+}
+
+.collapsible-header:hover {
+    color: #0077cc;
+}
