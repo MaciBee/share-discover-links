@@ -1,47 +1,122 @@
+//v0.7 Added search with highlighting and auto-expand categories 3.31.25 tried eleaing cache- but cant yet xo H
 // v0.6 fixed category grouping and it shows tags now. xo H  3.17.25
 //old code can be found in google docs byye
 // 3.28.25 8:51pm: collapable categories, uncatorized comes last and view new new browser  option added xo 
+
+let allLinks = [];
+let searchTerm = '';
+
+function highlightText(text, term) {
+    if (!term || !text) return text;
+    const regex = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    return text.replace(regex, '<mark>$&</mark>');
+}
+
 // When page is loaded, fetch and display links
 document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        // Handle both keyboard and touch input
+        ['input', 'change'].forEach(eventType => {
+            searchInput.addEventListener(eventType, debounce(function(e) {
+                searchTerm = e.target.value.toLowerCase().trim();
+                if (allLinks.length > 0) {
+                    displayPublicLinks(filterLinks());
+                }
+            }, 300));
+        });
+
+        // Clear button for mobile
+        searchInput.addEventListener('search', function() {
+            searchTerm = '';
+            if (allLinks.length > 0) {
+                displayPublicLinks(allLinks);
+            }
+        });
+    }
     fetchPublicLinks();
 });
 
-function fetchPublicLinks() {
-    fetch('/api/public-links', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            displayPublicLinks(data.links);
-        } else {
-            displayMessage('Failed to fetch public links: ' + data.message, true);
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching public links:', error);
-        displayMessage('Failed to fetch public links', true);
+// Debounce function to limit how often the search runs
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Filter links based on search term
+function filterLinks() {
+    if (!searchTerm) return allLinks;
+    
+    return allLinks.filter(link => {
+        const title = (link.title || '').toLowerCase();
+        const description = (link.description || '').toLowerCase();
+        const tags = Array.isArray(link.tags) ? link.tags.join(' ').toLowerCase() : '';
+        const category = (link.category_name || '').toLowerCase();
+        
+        link._matches = {
+            title: title.includes(searchTerm),
+            description: description.includes(searchTerm),
+            tags: tags.includes(searchTerm),
+            category: category.includes(searchTerm)
+        };
+        
+        return Object.values(link._matches).some(match => match);
     });
 }
 
+function fetchPublicLinks() {
+    console.log('Fetching links...');
+    const timestamp = new Date().getTime();
+    fetch(`/api/public-links?_=${timestamp}`, {
+        headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        },
+        credentials: 'same-origin'
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Got links:', data);
+            if (data.success) {
+                allLinks = data.links;
+                displayPublicLinks(allLinks);
+            } else {
+                displayMessage('Failed to fetch links: ' + data.message, true);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            displayMessage('Failed to fetch links', true);
+        });
+}
+
 function displayPublicLinks(links) {
-    console.log('Fetched public links:', links); // Debug log
     const linksList = document.getElementById('publicLinksList');
-    if (!linksList) {
-        console.error('publicLinksList element not found');
-        return;
-    }
+    if (!linksList) return;
 
-    linksList.innerHTML = ''; // Clear existing links
+    linksList.innerHTML = '';
 
-    // Group links by category
-    const groupedLinks = links.reduce((acc, link) => {
+    const groupedLinks = {};
+    links.forEach(link => {
         const category = link.category_name || 'Uncategorized';
-        if (!acc[category]) acc[category] = [];
-        acc[category].push(link);
-        return acc;
-    }, {});
+        if (!groupedLinks[category]) {
+            groupedLinks[category] = [];
+        }
+        groupedLinks[category].push(link);
+    });
+
+    const categories = Object.keys(groupedLinks)
+        .filter(c => c !== 'Uncategorized')
+        .sort()
+        .concat(groupedLinks['Uncategorized'] ? ['Uncategorized'] : []);
 
     let categoryNames = Object.keys(groupedLinks);
 
@@ -52,50 +127,69 @@ function displayPublicLinks(links) {
     }
 
     // Display categories and their links
-    categoryNames.forEach(category => {
-        // Create category header
+    categories.forEach(category => {
         const categoryHeader = document.createElement('h3');
         categoryHeader.textContent = category;
-        categoryHeader.style.cursor = 'pointer';
         categoryHeader.className = 'collapsible-header';
+        categoryHeader.style.cursor = 'pointer';
 
-        // Optional small category link
         const viewLink = document.createElement('small');
-	viewLink.innerHTML = ` (<a href="/category/${category.toLowerCase()}">View only ${category}</a>)`;
+        viewLink.innerHTML = ` (<a href="/category/${category.toLowerCase()}">View ${category}</a>)`;
         viewLink.style.marginLeft = '8px';
         categoryHeader.appendChild(viewLink);
 
-        // Add header to list
-        linksList.appendChild(categoryHeader);
-
-        // Create collapsible container
         const linksContainer = document.createElement('div');
         linksContainer.className = 'category-container';
-        linksContainer.style.display = 'none';
 
-        // Toggle collapse
-        categoryHeader.addEventListener('click', (e) => {
-            if (e.target.tagName === 'A') return; // Don't toggle if clicking view link
-            const isVisible = linksContainer.style.display === 'block';
-            linksContainer.style.display = isVisible ? 'none' : 'block';
+        // Handle both click and touch events for category headers
+        ['click', 'touchend'].forEach(eventType => {
+            categoryHeader.addEventListener(eventType, (e) => {
+                if (e.target.tagName === 'A') return;
+                e.preventDefault(); // Prevent double-firing on mobile
+                const isVisible = linksContainer.style.display === 'block';
+                linksContainer.style.display = isVisible ? 'none' : 'block';
+            });
         });
 
-        // Render links
+        const hasMatches = searchTerm && groupedLinks[category].some(link => 
+            Object.values(link._matches || {}).some(match => match)
+        );
+
+        linksContainer.style.display = hasMatches ? 'block' : 'none';
+
+        linksList.appendChild(categoryHeader);
+
         groupedLinks[category].forEach(link => {
             const linkElement = document.createElement('div');
             linkElement.className = 'link-item';
 
-            let tagsDisplay = link.tags && link.tags.length ? `Tags: ${link.tags.join(', ')}` : 'No tags';
-            let descriptionHtml = link.description && link.description.trim() ? `<div class="link-description">${link.description}</div>` : '';
+            let title = link.title || '';
+            let description = link.description || '';
+            let tagsDisplay = link.tags?.length ? 
+                `Tags: ${link.tags.join(', ')}` : 'No tags';
+            
+            if (searchTerm && link._matches) {
+                if (link._matches.title) {
+                    title = highlightText(title, searchTerm);
+                }
+                if (link._matches.description) {
+                    description = highlightText(description, searchTerm);
+                }
+                if (link._matches.tags) {
+                    tagsDisplay = highlightText(tagsDisplay, searchTerm);
+                }
+            }
+            
+            const descriptionHtml = description.trim() ? 
+                `<div class="link-description">${description}</div>` : '';
 
             linkElement.innerHTML = `
-                <div class="link-title"><a href="${link.url}" target="_blank">${link.title}</a></div>
+                <div class="link-title"><a href="${link.url}" target="_blank">${title}</a></div>
                 ${descriptionHtml}
                 <div class="link-tags">${tagsDisplay}</div>
             `;
             linksContainer.appendChild(linkElement);
         });
-
         linksList.appendChild(linksContainer);
     });
 }
