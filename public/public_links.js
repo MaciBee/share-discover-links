@@ -1,8 +1,3 @@
-//v0.7 Added search with highlighting and auto-expand categories 3.31.25 tried eleaing cache- but cant yet xo H
-// v0.6 fixed category grouping and it shows tags now. xo H  3.17.25
-//old code can be found in google docs byye
-// 3.28.25 8:51pm: collapable categories, uncatorized comes last and view new new browser  option added xo 
-
 let allLinks = [];
 let searchTerm = '';
 
@@ -98,11 +93,33 @@ function fetchPublicLinks() {
         });
 }
 
+// Get the ID from the link URL
+function getLinkId(link) {
+    if (!link || !link.url) return 0;
+    const parts = link.url.split('/');
+    const lastPart = parts[parts.length - 1];
+    const id = parseInt(lastPart);
+    return isNaN(id) ? 0 : id;
+}
+
 function displayPublicLinks(links) {
     const linksList = document.getElementById('publicLinksList');
     if (!linksList) return;
 
     linksList.innerHTML = '';
+
+    // Sort links by ID (newer links have higher IDs)
+    links.sort((a, b) => {
+        const idA = getLinkId(a);
+        const idB = getLinkId(b);
+        return idB - idA; // Higher IDs (newer links) first
+    });
+    
+    console.log('First 3 links:', 
+        links.slice(0, 3).map(l => ({
+            title: l.title,
+            id: getLinkId(l)
+        })));
 
     const groupedLinks = {};
     links.forEach(link => {
@@ -183,8 +200,12 @@ function displayPublicLinks(links) {
             const descriptionHtml = description.trim() ? 
                 `<div class="link-description">${description}</div>` : '';
 
+            // No new badge needed
+            
             linkElement.innerHTML = `
-                <div class="link-title"><a href="${link.url}" target="_blank">${title}</a></div>
+                <div class="link-title">
+                    <a href="${link.url}" target="_blank">${title}</a>
+                </div>
                 ${descriptionHtml}
                 <div class="link-tags">${tagsDisplay}</div>
             `;
