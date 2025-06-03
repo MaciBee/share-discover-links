@@ -307,7 +307,8 @@ app.get('/api/my-links', async (req, res) => {
 //    }
 //});
 
-//categories display?
+//categories display sort by newest 5.8.25
+///uncommented on 5.28.25 bc no idea what the bottom code tried to do
 app.get('/api/public-links', async (req, res) => {
     try {
         const [links] = await pool.query(`
@@ -318,7 +319,28 @@ app.get('/api/public-links', async (req, res) => {
             LEFT JOIN categories c ON l.category_id = c.id
             WHERE l.is_public = 1
             GROUP BY l.id
+	    ORDER BY l.created_at DESC
+
         `);
+
+////categories display sort by newest 5.8.25
+//const [links] = await pool.query(`
+  //  SELECT 
+  //     l.id, 
+  //      l.url, 
+ //       l.title, 
+ //       l.description, 
+ //       l.is_public, 
+ //       c.name AS category_name, 
+ //       l.created_at
+ //   FROM links l
+ //   LEFT JOIN link_tags lt ON l.id = lt.link_id
+ //   LEFT JOIN tags t ON lt.tag_id = t.id
+ //   LEFT JOIN categories c ON l.category_id = c.id
+ //   WHERE l.is_public = 1
+ //   GROUP BY l.id
+ //   ORDER BY l.created_at DESC
+//`);
 
         // Map over links to ensure tags are split into arrays if not already
         const formattedLinks = links.map(link => ({

@@ -71,6 +71,11 @@ function login() {
     .then(data => {
         displayMessage(data.message);
         document.getElementById('loginForm').reset(); // Reset login form
+        //6.3.25 Hide login and registration containers after successful login
+        //update to fix issue where login & signup reamin visible after login. code added
+        //to hide both loginContainer & registerContainer divs after login 
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('registerContainer').style.display = 'none';
         document.getElementById('linkSubmissionContainer').style.display = 'block';
         document.getElementById('linksDisplayContainer').style.display = 'block';
         fetchLinks(); // Fetch links after successful login
