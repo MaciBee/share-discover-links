@@ -82,6 +82,7 @@ function fetchPublicLinks() {
             console.log('Got links:', data);
             if (data.success) {
                 allLinks = data.links;
+                console.log('Number of links fetched:', allLinks.length);
                 displayPublicLinks(allLinks);
             } else {
                 displayMessage('Failed to fetch links: ' + data.message, true);
@@ -94,13 +95,31 @@ function fetchPublicLinks() {
 }
 
 // Get the ID from the link URL
+//prior to 6.4.25 displays new links bottom 
+//function getLinkId(link) {
+//    if (!link || !link.url) return 0;
+//    const parts = link.url.split('/');
+//    const lastPart = parts[parts.length - 1];
+//    const id = parseInt(lastPart);
+//    return isNaN(id) ? 0 : id;
+//}
+//take 2 
+
+//6.4.25 Get the ID from the link using id
+//grok says:Enhanced getLinkId function to handle cases where link.id might not be available by adding a fallback to extract an ID from link.url.
 function getLinkId(link) {
-    if (!link || !link.url) return 0;
-    const parts = link.url.split('/');
-    const lastPart = parts[parts.length - 1];
-    const id = parseInt(lastPart);
+    if (!link) return 0;
+    let id = 0;
+    if (link.id) {
+        id = parseInt(link.id);
+    } else if (link.url) {
+	const parts = link.url.split('/');
+        const lastPart = parts[parts.length - 1];
+	id = parseInt(lastPart);
+    }
     return isNaN(id) ? 0 : id;
 }
+
 
 function displayPublicLinks(links) {
     const linksList = document.getElementById('publicLinksList');

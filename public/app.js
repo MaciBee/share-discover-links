@@ -126,7 +126,10 @@ function displayLinks(links) {
     }
 
     linksList.innerHTML = ''; // Clear existing links
-
+//6.4.25 
+// Sort links by ID in descending order (newest first)
+    links.sort((a, b) => b.id - a.id);
+//end chagne 
     // Group links by category
     const groupedLinks = links.reduce((acc, link) => {
         const category = link.category_name || 'Uncategorized';
