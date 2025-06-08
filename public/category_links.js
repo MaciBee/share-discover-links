@@ -1,7 +1,8 @@
 // 3.28.25 xo
 document.addEventListener('DOMContentLoaded', function() {
     const pathParts = window.location.pathname.split('/');
-    const categoryFilter = pathParts[2]; // e.g. 'bookshelf'
+//6.7.25 causig prob w. category names change    const categoryFilter = pathParts[2]; // e.g. 'bookshelf'
+    const categoryFilter = decodeURIComponent(pathParts[2]); // Decode URL component to handle spaces as actual spaces
 
     if (!categoryFilter) {
         displayMessage('No category specified', true);

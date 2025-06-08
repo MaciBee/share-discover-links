@@ -3,24 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>Discover</title>
-<link rel="stylesheet" href="/public/styles_links.css?v=4">
+<link rel="stylesheet" href="/public/styles_links.css?v=4.4">
 </head>
 <body>
+    <header class="top-bar">
     <div class="logo">
         <a href="https://autodidacting.org" style="text-decoration: none; color: inherit;">
             autodidacting
         </a>
     </div>
-        <div class="top-right"><a href="/public" class="public-link" onclick="showPublic()">Public Links</a></div>
+        <div class="top-right"><a href="/public" class="public-link" onclick="showPublic()">Public Links</a></div> 
+    </header>
 
 
-    <div id="registerContainer">
+<!--6.5.25    <div id="registerContainer">
 <h3> <center>welcome to your friendly bookmarking and discovering site :D</center><h3> 
-<h4> <center>how it works 1. register to start savings your links 2. unselect share publicly if you want to be the only one that sees the link  3. plz write your password and username down bc we don't have password reset yet. 4. thank you for using my site. 5. check out what me and others have shared  <a href="/public" class="nav-link"> public page  </a>   </center> </h4>
-<!--<h3> <center> register -> login -> save -> share </h3> -->
-<h5> <center> beta v 0.8 </center> </h5>
+<h4> <center>how it works 1. register to start savings your links 2. select share publicly. otherwise, only you'll have access  3. plz write your password and username down bc we don't have password reset yet. 4. thank you for using my site. 5. check out what me and others have shared  <a href="/public" class="nav-link"> public page  </a>   </center> </h4>
+<!--<h3> <center> register -> login -> save -> share </h3> --> 
+    <div id="registerContainer" class="card-container">
+        <h2><center>Welcome to Bookmarking & Discovery</center></h2>
+        <p style="text-align: center; margin-bottom: 1.5rem;">Register to save links. Check 'Share publicly' to share links. Write down your credentials (no password reset yet).Check shared content on <a href="/public" class="nav-link">public page</a>.</p> 
+        <p style="text-align: center; font-size: 0.8rem; color: #6a3d0f;">thank u for checking it out & if you've been here before, welcome back! :)</p>
+        <p style="text-align: center; font-size: 0.8rem; color: #6a3d0f;">beta v 0.8.6</p>
 
-        <h2>Register</h2>
+<!--<h5> <center> beta v 0.8.6 </center> </h5>-->
+
+        <h3>Register</h3>
         <form id="registerForm">
             <input type="text" id="registerUsername" placeholder="Username" required>
             <input type="password" id="registerPassword" placeholder="Password" required>
@@ -28,8 +36,10 @@
         </form>
     </div>
 
-    <div id="loginContainer">
-        <h2>Login</h2>
+<!--    <div id="loginContainer">
+        <h2>Login</h2> -->
+    <div id="loginContainer" class="card-container">
+        <h3>Login</h3>
         <form id="loginForm">
             <input type="text" id="username" placeholder="Username" required>
             <input type="password" id="password" placeholder="Password" required>
@@ -37,20 +47,31 @@
         </form>
     </div>
 
-   <div id="linkSubmissionContainer" style="display:none;">
-        <h1>Submit a Link</h1>
+<!--   <div id="linkSubmissionContainer" style="display:none;">
+        <h1>Submit a Link</h1> -->
+    <div id="linkSubmissionContainer" style="display:none;" class="card-container">
+        <h3>Submit a Link</h3>
         <form id="submitLinkForm">
             <input type="text" id="url" placeholder="URL" required>
             <input type="text" id="title" placeholder="Title" required>
             <textarea id="description" placeholder="Description"></textarea>
 	<select id="category_id" name="category_id" required>
+                <option value="8">Cool Resources</option>
+		<option value="10">Entertainment</option>
+		<option value="9">Language Learning</option>
+		<option value="6">Learning Resources</option>
+		<option value="7">Programming</option>
+		<option value="11">Reading & Knowledge</option>
+
+<!--6.8.25 change
 	        <option value="">Select a Category</option>
                 <option value="11">Bookshelf</option>
         	<option value="6">Resources</option>
 	        <option value="7">Educational</option>
         	<option value="8">Tutorial</option>
         	<option value="9">Entertainment</option>
-        	<option value="10">Other</option>
+        	<option value="10">Other</option> -->
+
        </select>
 <!--categories start at 6. 1-5 are gone -->
             <input type="text" id="tags" placeholder="Tags (comma-separated)">
@@ -61,8 +82,11 @@
         </form>
     </div>
 
-    <div id="linksDisplayContainer" style="display:none;">
-        <h1>Your Links</h1>
+<!--    <div id="linksDisplayContainer" style="display:none;">
+        <h1>Your Links</h1>-->
+
+    <div id="linksDisplayContainer" style="display:none;" class="card-container">
+        <h3>Your Links</h3>
         <ul id="linksList"></ul>
     </div>
 
