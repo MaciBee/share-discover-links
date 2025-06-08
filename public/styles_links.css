@@ -1,3 +1,4 @@
+/* v.5 6.8.25 prettier login and register, boxses. disgusting abount of edits still not perfect yet but good enoug */
 /* v.4 6.3.25 Digital Garden Theme - links as plants with growth animations */
 /* v.3 6.3.25 card design, hover and spacing */
 /* v.2 was with bigger fonts - Zen-inspired minimalistic design with natural elements */
@@ -282,23 +283,224 @@ body {
 
 /* Container width and responsive design */
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 2rem;
+    width: 100%;
+}
+
+/* Welcome text container styling */
+.welcome-container {
+  background: linear-gradient(to bottom right, rgba(241, 248, 233, 0.98), rgba(232, 245, 233, 0.95));
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(129, 199, 132, 0.15), 0 0 0 1px rgba(129, 199, 132, 0.1);
+  margin: 1rem auto; /* Reduced margin for less prominence on desktop */
+  max-width: 700px;
+  padding: 1rem; /* Reduced padding for compactness */
+  text-align: center;
+}
+
+.welcome-container h1 {
+  margin-bottom: 0.5rem;
+  color: #5c4033;
+  font-size: 1.5rem; /* Smaller font size on desktop */
+}
+
+.welcome-container p {
+  margin: 0.5rem 0;
+  color: #6a3d0f;
+  font-size: 1rem;
+}
+
+/* Card container styling for forms */
+.card-container {
+  background: linear-gradient(to bottom right, rgba(241, 248, 233, 0.98), rgba(232, 245, 233, 0.95));
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(129, 199, 132, 0.15), 0 0 0 1px rgba(129, 199, 132, 0.1);
+  margin: 2rem auto;
+  max-width: 700px;
+  padding: 1rem;
+}
+
+.card-container h3 {
+  margin-bottom: 1.5rem;
+  color: #5c4033;
+  font-size: 1.4rem;
+}
+
+/* Style for link submission form */
+#linkSubmissionContainer form,
+#loginForm,
+#registerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+#linkSubmissionContainer input,
+#linkSubmissionContainer textarea,
+#linkSubmissionContainer select,
+#loginForm input,
+#registerForm input {
+  width: 100%;
+  margin: 0;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid #d6e6d6;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 6px rgba(181, 166, 146, 0.1);
+  color: #333333;
+}
+
+#linkSubmissionContainer button,
+#loginForm button,
+#registerForm button {
+  padding: 0.3rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #81c784;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#linkSubmissionContainer button:hover,
+#loginForm button:hover,
+#registerForm button:hover {
+  background-color: #689f38;
+}
+
+#linkSubmissionContainer label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #5c4033;
+}
+
+@media (min-width: 769px) {
+  body {
+    display: block;
+    padding: 2rem 1rem;
+    margin-top: 80px;
+    max-width: 100%;
+    overflow-x: visible;
+  }
+
+  .top-bar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #e8f5e9;
+    z-index: 1000;
+    padding: 0.75rem 1.5rem;
+    box-sizing: border-box;
+  }
+
+  #registerContainer, #loginContainer, #linkSubmissionContainer, #linksDisplayContainer {
+    margin: 2rem auto;
+    max-width: 700px;
+    width: 90%;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    width: 100%;
+  }
+
+  #linksList {
+    max-width: 900px;
+    margin: 2rem auto;
+  }
+
+  /* Adjust welcome container for desktop */
+  .welcome-container {
+    margin: 0.5rem auto; /* Further reduced margin on desktop */
+    padding: 0.75rem; /* Further reduced padding */
+    max-width: 500px; /* Smaller width on desktop */
+    font-size: 0.9rem; /* Smaller overall text */
+  }
+
+  .welcome-container h1 {
+    font-size: 1.2rem; /* Even smaller on desktop */
+  }
 }
 
 @media (max-width: 768px) {
-    body {
-        padding: 1rem;
-    }
+  /* Ensure welcome container looks good on mobile */
+  .welcome-container {
+    margin: 1.5rem auto; /* More margin on mobile for visibility */
+    padding: 1.5rem; /* More padding on mobile */
+    max-width: 90%; /* Full width on mobile */
+  }
 
-    #linksList li {
-        padding: 1rem;
-    }
+  .welcome-container h1 {
+    font-size: 1.5rem; /* Restore original size on mobile */
+  }
 
-    .search-container {
-        padding: 0 1rem;
-    }
+  body {
+    padding: 1rem;
+  }
+
+  #linksList li {
+    padding: 1rem;
+  }
+
+  .search-container {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .top-bar {
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .search-wrapper {
+    width: 100%;
+    max-width: none;
+  }
+
+  .search-wrapper input {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .logo {
+    font-size: 1.3rem;
+  }
+
+  .top-right {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .login-link, .nav-link {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  /* Style for link submission form on mobile */
+  #linkSubmissionContainer form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  #linkSubmissionContainer input,
+  #linkSubmissionContainer textarea,
+  #linkSubmissionContainer select {
+    width: 100%;
+    margin: 0;
+  }
 }
 
 body {
