@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-	// added this next line of code on 3.24.25 this see if category filtering is working
+    // added this next line of code on 3.24.25 this see if category filtering is working
     console.log("Current path is:", window.location.pathname);
 
     // Grab references to each form and the display container
@@ -54,7 +54,7 @@ function register() {
         displayMessage(error.message, true);
     });
 }
-////changed  for clear inpu 
+
 function login() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
@@ -73,18 +73,17 @@ function login() {
         document.getElementById('loginForm').reset(); // Reset login form
         //6.3.25 Hide login and registration containers after successful login
         //update to fix issue where login & signup reamin visible after login. code added
-        //to hide both loginContainer & registerContainer divs after login 
-        document.getElementById('loginContainer').style.display = 'none';
-        document.getElementById('registerContainer').style.display = 'none';
-        document.getElementById('linkSubmissionContainer').style.display = 'block';
-        document.getElementById('linksDisplayContainer').style.display = 'block';
+        //to hide auth section after login 
+        document.querySelector('.auth-section').classList.add('hidden');
+        document.getElementById('linkSubmissionContainer').classList.remove('hidden');
+        document.getElementById('linksDisplayContainer').classList.remove('hidden');
         fetchLinks(); // Fetch links after successful login
     })
     .catch(error => {
         displayMessage(error.message, true);
     });
 }
-///
+
 function submitLink() {
     const url = document.getElementById('url').value;
     const title = document.getElementById('title').value;
@@ -113,83 +112,107 @@ function submitLink() {
     });
 }
 
+// Toggle submit form visibility
+function toggleSubmitForm() {
+    const content = document.getElementById('submitFormContent');
+    const icon = document.getElementById('toggleIcon');
+    
+    if (content.classList.contains('expanded')) {
+        content.classList.remove('expanded');
+        icon.textContent = '▼';
+    } else {
+        content.classList.add('expanded');
+        icon.textContent = '▲';
+    }
+}
 
-// code was changed in 10.26.24 and pasted old code and took it out bc it was claude and ive no fucking idea what i'm doing
-
-//first display grouped links fixed on  8.5.24
-//second grup links fix 3.28.25: include group links, clickable category and add bookshelf xo
 function displayLinks(links) {
     const linksList = document.getElementById('linksList');
-    if (!linksList) {
-        console.error('linksList element not found');
+    linksList.innerHTML = '';
+
+    if (links.length === 0) {
+        linksList.innerHTML = '<li style="text-align: center; color: #4a5568; padding: 2rem;">No links saved yet. Submit your first link above! 🌱</li>';
         return;
     }
 
-    linksList.innerHTML = ''; // Clear existing links
-//6.4.25 
-// Sort links by ID in descending order (newest first)
-    links.sort((a, b) => b.id - a.id);
-//end chagne 
     // Group links by category
-    const groupedLinks = links.reduce((acc, link) => {
+    const groupedLinks = {};
+    links.forEach(link => {
         const category = link.category_name || 'Uncategorized';
-        if (!acc[category]) {
-            acc[category] = [];
+        if (!groupedLinks[category]) {
+            groupedLinks[category] = [];
         }
-        acc[category].push(link);
-        return acc;
-    }, {});
-
-    // Sort categories in desired order
-    let categoryNames = Object.keys(groupedLinks);
-
-    const preferredOrder = ['Bookshelf', 'Resources', 'Educational', 'Tutorial', 'Entertainment', 'Other', 'Uncategorized'];
-
-    categoryNames.sort((a, b) => {
-        return preferredOrder.indexOf(a) - preferredOrder.indexOf(b);
+        groupedLinks[category].push(link);
     });
 
-    // Display grouped links
-    categoryNames.forEach(category => {
-        // Create clickable category header
-        const categoryHeader = document.createElement('h3');
-        categoryHeader.textContent = category;
+    // Sort categories alphabetically
+    const sortedCategories = Object.keys(groupedLinks).sort();
+
+    sortedCategories.forEach(category => {
+        const categoryLinks = groupedLinks[category];
+        
+        // Create category section
+        const categorySection = document.createElement('div');
+        categorySection.className = 'category-section';
+        
+        // Category header
+        const categoryHeader = document.createElement('div');
+        categoryHeader.className = 'category-header';
         categoryHeader.style.cursor = 'pointer';
-        categoryHeader.className = 'collapsible-header';
-        linksList.appendChild(categoryHeader);
-
-        // Create container for links, initially hidden
-        const categoryContainer = document.createElement('div');
-        categoryContainer.className = 'category-container';
-        categoryContainer.style.display = 'none';
-
-        // Click to show/hide links
-        categoryHeader.addEventListener('click', () => {
-            const isVisible = categoryContainer.style.display === 'block';
-            categoryContainer.style.display = isVisible ? 'none' : 'block';
+        categoryHeader.innerHTML = `
+            <span class="category-icon">🍃</span>
+            <h4>${category}</h4>
+            <span class="category-count">${categoryLinks.length}</span>
+            <span class="tap-here">tap</span>
+        `;
+        
+        // Category links container
+        const categoryLinksContainer = document.createElement('div');
+        categoryLinksContainer.className = 'category-links category-content';
+        
+        // Add click handler for collapsible behavior
+        categoryHeader.addEventListener('click', function() {
+            const isExpanded = categoryLinksContainer.classList.contains('expanded');
+            if (isExpanded) {
+                categoryLinksContainer.classList.remove('expanded');
+            } else {
+                categoryLinksContainer.classList.add('expanded');
+            }
         });
 
-        // Add all links for this category
-        groupedLinks[category].forEach(link => {
-            const linkElement = document.createElement('div');
-            linkElement.className = 'link-item';
-
-            let tagsDisplay = link.tags && link.tags.length ? `Tags: ${link.tags.join(', ')}` : 'No tags';
-            let descriptionHtml = link.description ? `<div class="link-description">${link.description}</div>` : '';
-
-            linkElement.innerHTML = `
-                <div class="link-title"><a href="${link.url}" target="_blank">${link.title}</a></div>
-                ${descriptionHtml}
-                <div class="link-tags">${tagsDisplay}</div>
+        categoryLinks.forEach(link => {
+            const linkItem = document.createElement('div');
+            linkItem.className = 'link-item';
+            
+            const description = link.description && link.description.trim() 
+                ? (link.description.length > 150 
+                    ? link.description.substring(0, 150) + '...' 
+                    : link.description)
+                : '';
+            
+            const tags = link.tags && link.tags.length > 0 
+                ? `Tags: ${link.tags.join(', ')}` 
+                : '';
+            
+            linkItem.innerHTML = `
+                <a href="${link.url}" target="_blank" class="link-title">${link.title}</a>
+                <div class="link-url">${link.url}</div>
+                ${description ? `<div class="link-description">${description}</div>` : ''}
+                <div class="link-meta">
+                    <span class="link-category">${category}</span>
+                    ${tags ? `<span class="link-tags">${tags}</span>` : ''}
+                    ${link.is_public ? '<span style="color: #68d391;">🌍 Public</span>' : '<span style="color: #4a5568;">🔒 Private</span>'}
+                </div>
             `;
-            categoryContainer.appendChild(linkElement);
+            
+            categoryLinksContainer.appendChild(linkItem);
         });
-
-        linksList.appendChild(categoryContainer);
+        
+        categorySection.appendChild(categoryHeader);
+        categorySection.appendChild(categoryLinksContainer);
+        linksList.appendChild(categorySection);
     });
 }
-
-///
 
 function fetchLinks() {
     fetch('/api/my-links', {
@@ -206,34 +229,6 @@ function fetchLinks() {
     })
     .catch(error => displayMessage('Failed to fetch links', true));
 }
-//end of change made in 10.26 
-
-
-
-
-//10.14.24 commented bc of inconsitency with display links :>> ?
-//function fetchLinks() {
-  //  fetch('/api/my-links', {
-    //    method: 'GET',
-    //    headers: {'Content-Type': 'application/json'}
-   // })
-   // .then(response => response.json())
-   // .then(data => {
-    //    if (data.success) {
-      //      const linksList = document.getElementById('linksList');
-        //    linksList.innerHTML = '';
-          //  data.links.forEach(link => {
-            //    const li = document.createElement('li');
-             //   li.textContent = `${link.title} - ${link.url} (Tags: ${link.tags})`;
-              //  linksList.appendChild(li);
-           // });
-       // } else {
-         //   displayMessage('Failed to fetch links', true);
-        //}
-    //})
-   // .catch(error => displayMessage('Failed to fetch links', true));
-//}
-//fml who knows>>
 
 function displayMessage(message, isError = false) {
     const messageDiv = document.getElementById('message');

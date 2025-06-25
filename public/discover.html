@@ -2,104 +2,113 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Discover</title>
-<link rel="stylesheet" href="/public/styles_links.css?v=4.9.7">
+    <title>Discover & Save Links</title>
+    <link rel="stylesheet" href="/public/styles_discover.css?v=1.1">
 </head>
 <body>
     <header class="top-bar">
-    <div class="logo">
-        <a href="https://autodidacting.org" style="text-decoration: none; color: inherit;">
-            autodidacting
-        </a>
-    </div>
-        <div class="top-right"><a href="/public" class="public-link" onclick="showPublic()">Public Links</a></div> 
+        <div class="logo">
+            <a href="https://autodidacting.org">autodidacting</a>
+        </div>
+        <div class="top-right">
+            <a href="/public" class="nav-link">🌿 Public Links</a>
+        </div> 
     </header>
 
+    <div class="page-container">
+        <div class="intro-text">
+<!--            <h3>🌿 Discover & Save Links</h3>-->
+            <h3>🌿 Save. Share. Discover</h3>
 
-<!--6.5.25    <div id="registerContainer">
-<h3> <center>welcome to your friendly bookmarking and discovering site :D</center><h3> 
-<h4> <center>how it works 1. register to start savings your links 2. select share publicly. otherwise, only you'll have access  3. plz write your password and username down bc we don't have password reset yet. 4. thank you for using my site. 5. check out what me and others have shared  <a href="/public" class="nav-link"> public page  </a>   </center> </h4>
-<!--<h3> <center> register -> login -> save -> share </h3> --> 
-    <div id="registerContainer" class="card-container">
-        <h5><center>Welcome to Bookmarking & Discovery</center></h5>
-        <p style="text-align: center; margin-bottom: 1.5rem;">Register to save links. Check 'Share publicly' to share links. Write down your credentials (no password reset yet).Check shared content on <a href="/public" class="nav-link">public page</a>.</p> 
-        <p style="text-align: center; font-size: 0.8rem; color: #6a3d0f;">thank u for checking it out & if you've been here before, welcome back! :)</p>
-        <p style="text-align: center; font-size: 0.8rem; color: #6a3d0f;">beta v 0.8.6</p>
+            <div class="welcome-text">
+                <p>Save and organize your favorite links. Share publicly to contribute to the community.</p>
+                <p><strong>📝 Note:</strong> Please save your credentials - password reset isn't available yet.</p>
+                <p>Check out what others have shared on the <a href="/public" style="color: #2f855a; font-weight: 500;">public page</a>!</p>
+                <div class="version">💚 v.1.0.0 💚</div>
+		<div class="message">💚 Qui veut, peut 💚</div>
 
- <div id="loginContainer" class="card-container">
-        <h3>Login</h3>
-        <form id="loginForm">
-            <input type="text" id="username" placeholder="Username" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
+            </div>
+        </div>
+
+        <div class="auth-section">
+            <div class="auth-card">
+                <h3>🌱 Register</h3>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <input type="text" id="registerUsername" placeholder="Choose a username" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="registerPassword" placeholder="Create a password" required>
+                    </div>
+                    <button type="submit" class="btn">Create Account</button>
+                </form>
+            </div>
+
+            <div class="auth-card">
+                <h3>🔑 Login</h3>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <input type="text" id="username" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn">Sign In</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="linkSubmissionContainer" class="hidden auth-card">
+            <button type="button" class="submit-toggle" onclick="toggleSubmitForm()">
+                📎 Submit a Link
+                <span id="toggleIcon">▼</span>
+            </button>
+            <div class="submit-form-content" id="submitFormContent">
+                <form id="submitLinkForm">
+                    <div class="form-group">
+                        <input type="url" id="url" placeholder="https://example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="title" placeholder="Link title" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="description" placeholder="Brief description or takeaway.'Brevity is the soul of wit'"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <select id="category_id" name="category_id" required>
+                            <option value="">Choose a category</option>
+                            <option value="8">Tools</option>
+                            <option value="10">Fun</option>
+                            <option value="9">Languages</option>
+                            <option value="6">Learn</option>
+                            <option value="7">Programming</option>
+                            <option value="11">Read</option>
+
+
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="tags" placeholder="Tags (comma-separated, optional)">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="isPublic">
+                            <span>🌍 Share publicly (others can see this link)</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn">Save Link</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="linksDisplayContainer" class="hidden user-links">
+            <h3>📚 Your Saved Links</h3>
+            <ul id="linksList"></ul>
+        </div>
+
+        <div id="message"></div>
     </div>
-
-        <h3>Register</h3>
-        <form id="registerForm">
-            <input type="text" id="registerUsername" placeholder="Username" required>
-            <input type="password" id="registerPassword" placeholder="Password" required>
-            <button type="submit">Register</button>
-        </form>
-    </div>
-
-<!--    <div id="loginContainer">
-        <h2>Login</h2> -->
-    <!--<div id="loginContainer" class="card-container">
-        <h3>Login</h3>
-        <form id="loginForm">
-            <input type="text" id="username" placeholder="Username" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-    </div>-->
-
-<!--   <div id="linkSubmissionContainer" style="display:none;">
-        <h1>Submit a Link</h1> -->
-    <div id="linkSubmissionContainer" style="display:none;" class="card-container">
-        <h3>Submit a Link</h3>
-        <form id="submitLinkForm">
-            <input type="text" id="url" placeholder="URL" required>
-            <input type="text" id="title" placeholder="Title" required>
-            <textarea id="description" placeholder="Description"></textarea>
-	<select id="category_id" name="category_id" required>
-                <option value="8">Cool Resources</option>
-		<option value="10">Entertainment</option>
-		<option value="9">Language Learning</option>
-		<option value="6">Learning Resources</option>
-		<option value="7">Programming</option>
-		<option value="11">Reading & Knowledge</option>
-
-<!--6.8.25 change
-	        <option value="">Select a Category</option>
-                <option value="11">Bookshelf</option>
-        	<option value="6">Resources</option>
-	        <option value="7">Educational</option>
-        	<option value="8">Tutorial</option>
-        	<option value="9">Entertainment</option>
-        	<option value="10">Other</option> -->
-
-       </select>
-<!--categories start at 6. 1-5 are gone -->
-            <input type="text" id="tags" placeholder="Tags (comma-separated)">
-	    <label>
-            	<input type="checkbox" id="isPublic">Check to Share publicly
-            </label>
-            <button type="submit">Save Link</button>
-        </form>
-    </div>
-
-<!--    <div id="linksDisplayContainer" style="display:none;">
-        <h1>Your Links</h1>-->
-
-    <div id="linksDisplayContainer" style="display:none;" class="card-container">
-        <h3>Your Links</h3>
-        <ul id="linksList"></ul>
-    </div>
-
-
-    <div id="message"></div>
     
-    <script src="/public/app.js?v=3.2"></script>
+    <script src="/public/app.js?v=3.6"></script>
 </body>
 </html>
