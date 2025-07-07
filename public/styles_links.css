@@ -1,5 +1,5 @@
 /* Epic Progressive Green Public Page Styling */
-body {
+/*body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
@@ -134,7 +134,9 @@ body {
 }
 
 /* Beautiful Intro Box */
-.intro-text {
+
+
+/*.intro-text {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     border-radius: 20px;
@@ -153,8 +155,9 @@ color: #2d5a3d
     font-size: 2rem;
     margin-bottom: 1rem;
 }
- */
-.intro-text::before {
+OLD? */
+
+/*.intro-text::before {
     content: '';
     position: absolute;
     top: 0;
@@ -196,7 +199,8 @@ color: #2d5a3d
 
 .intro-text p:last-child {
 /*    color: #68d391;*/
-    color: #2d5a3d	
+  
+/*  color: #2d5a3d	
     font-size: 0.9rem;
     font-style: italic;
     margin-bottom: 0;
@@ -352,12 +356,12 @@ color: #2d5a3d
     outline: none;
 }
 
-/*.link-title:hover::after {
+/* OLD.link-title:hover::after {
 	color: #38a169 !important;
     text-decoration: none !important;
-}*/
+}END*/
 
-
+/*
 .link-url {
     font-size: 0.85rem;
     color: #68d391;
@@ -372,7 +376,9 @@ color: #2d5a3d
     margin-bottom: 1rem;
     font-size: 0.9rem;
     /* Truncate long descriptions */
-    display: -webkit-box;
+  
+/*
+  display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -506,7 +512,9 @@ color: #2d5a3d
     }
     
     /* Hide the chain link on mobile since it doesn't work */
-    .view-category-link {
+  
+/*
+  .view-category-link {
         display: none;
     }
     
@@ -552,6 +560,7 @@ color: #2d5a3d
 /* v1 message */
 
 /* V1.0 Launch Popup */
+/*
 .v1-popup {
     position: fixed;
     top: 20px;
@@ -646,7 +655,8 @@ color: #2d5a3d
 }
 
 /*popup message*/
-.category-content.expanded {
+
+/*.category-content.expanded {
         padding: 0.5rem 0;
     }
 }
@@ -656,3 +666,4 @@ color: #2d5a3d
         padding: 0.5rem 0;
     }
 }
+*/
